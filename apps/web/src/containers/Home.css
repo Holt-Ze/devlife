@@ -1,0 +1,320 @@
+.screen.home {
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+    row-gap: 0;
+    padding: 24px 0 8px;
+    position: relative;
+}
+.hero-copy {
+    grid-column: 1;
+}
+.hero-copy .eyebrow {
+    margin-bottom: 26px;
+}
+.hero-copy h1 {
+    font-size: clamp(40px, 4.4vw, 64px);
+    line-height: 1.23;
+    letter-spacing: -2px;
+    margin: 0;
+    font-weight: 750;
+}
+.hero-copy h1 > span {
+    display: block;
+    color: var(--color-primary);
+}
+.cursor {
+    animation: blink 1.2s step-end infinite;
+    font-family: Consolas, monospace;
+}
+.hero-copy h1 .cursor {
+    color: var(--color-primary);
+    font-weight: 400;
+}
+.hero-lead {
+    font-size: 18px;
+    line-height: 1.8;
+    margin: 24px 0 15px;
+    font-weight: 500;
+}
+.hero-description {
+    font-size: 12px;
+    line-height: 2;
+    color: var(--muted-text);
+    margin: 0;
+}
+.screen.home > .controls {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 28px;
+    max-width: 350px;
+}
+.screen.home > .controls > div {
+    display: flex;
+    gap: 12px;
+}
+.screen.home > .controls > div > button {
+    flex: 1;
+    height: 44px;
+    font-size: 12px;
+}
+.screen.home > .controls > div > button.focus {
+    height: 51px;
+    display: flex;
+    gap: 14px;
+    font-size: 14px;
+}
+.screen.home .focus > span:last-child {
+    margin-left: auto;
+}
+.screen.home .focus > span:first-child {
+    margin-right: auto;
+}
+.hero-preview {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    background: var(--panel-background);
+    overflow: hidden;
+    box-shadow: 0 20px 70px #0002;
+    transform: translateY(5px);
+}
+.preview-title {
+    height: 43px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--panel-border);
+    color: var(--muted-text);
+    font:
+        11px Consolas,
+        monospace;
+}
+.preview-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    margin-left: auto;
+}
+.code-preview {
+    padding: 24px 15px 25px;
+    font-size: 11px;
+    line-height: 2.45;
+}
+.code-preview > div {
+    display: flex;
+    white-space: nowrap;
+}
+.code-preview i {
+    font-style: normal;
+    color: var(--muted-text);
+    opacity: 0.5;
+    margin-right: 21px;
+    font-size: 10px;
+}
+.code-preview b {
+    color: #b697ef;
+    font-weight: 400;
+}
+.code-preview em {
+    color: var(--color-primary);
+    font-style: normal;
+}
+.code-preview strong {
+    color: #e5b376;
+    font-weight: 400;
+}
+.code-comment {
+    color: var(--muted-text);
+}
+.code-function {
+    color: var(--color-info);
+}
+.preview-terminal {
+    border-top: 1px solid var(--panel-border);
+    padding: 17px 21px 20px;
+    font:
+        11px Consolas,
+        monospace;
+}
+.terminal-label {
+    display: flex;
+    gap: 16px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--base-text-color);
+    margin-bottom: 21px;
+}
+.terminal-label > span {
+    color: var(--muted-text);
+    margin-left: auto;
+}
+.preview-terminal p {
+    margin: 0 0 11px;
+}
+.preview-terminal p > span:first-child {
+    color: var(--color-primary);
+}
+.terminal-success {
+    color: var(--color-primary);
+}
+.terminal-muted {
+    color: var(--muted-text);
+}
+.home-facts {
+    grid-column: 1 / 3;
+    margin-top: 54px;
+    padding-top: 25px;
+    border-top: 1px solid var(--panel-border);
+    display: flex;
+    align-items: center;
+    gap: 42px;
+}
+.home-facts > div {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.home-facts strong {
+    font:
+        23px Consolas,
+        monospace;
+    color: var(--base-text-color);
+}
+.home-facts span {
+    font-size: 10px;
+    color: var(--muted-text);
+}
+.home-facts > p {
+    margin: 0 0 0 auto;
+    color: var(--muted-text);
+    font-size: 11px;
+    line-height: 1.8;
+    text-align: right;
+}
+.screen.home > .actions {
+    grid-column: 1 / 3;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: auto;
+    position: absolute;
+    right: 0;
+    top: -36px;
+}
+.screen.home > .actions > button {
+    width: 28px;
+    height: 28px;
+    padding: 5px;
+    border: 0;
+    color: var(--muted-text);
+    background: transparent;
+}
+.screen.home > .actions svg {
+    width: 18px;
+    height: 18px;
+}
+@keyframes blink {
+    0%,
+    45% {
+        opacity: 1;
+    }
+    46%,
+    100% {
+        opacity: 0;
+    }
+}
+@media (max-width: 1050px) {
+    .screen.home {
+        column-gap: 25px;
+    }
+    .code-preview {
+        font-size: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .code-preview i {
+        margin-right: 12px;
+    }
+    .hero-lead {
+        font-size: 17px;
+    }
+    .hero-description {
+        font-size: 11px;
+    }
+}
+@media (max-width: 760px) {
+    .screen.home {
+        grid-template-columns: 1fr;
+        padding-top: 20px;
+        max-width: 500px;
+    }
+    .hero-preview {
+        grid-column: 1;
+        grid-row: auto;
+        margin-top: 35px;
+        transform: none;
+    }
+    .hero-copy h1 {
+        font-size: 50px;
+    }
+    .hero-copy h1 > span {
+        display: inline;
+    }
+    .hero-copy h1 .cursor {
+        font-size: 36px;
+    }
+    .hero-copy .eyebrow {
+        font-size: 9px;
+        margin-bottom: 24px;
+    }
+    .hero-lead {
+        margin-top: 20px;
+        font-size: 16px;
+    }
+    .hero-description {
+        font-size: 12px;
+    }
+    .screen.home > .controls {
+        max-width: none;
+    }
+    .home-facts {
+        grid-column: 1;
+        gap: 30px;
+        margin-top: 32px;
+    }
+    .home-facts > p {
+        font-size: 10px;
+    }
+    .screen.home > .actions {
+        grid-column: 1;
+    }
+    .code-preview {
+        font-size: 11px;
+        padding: 20px 18px;
+    }
+    .code-preview i {
+        margin-right: 20px;
+    }
+    .desktop-break {
+        display: none;
+    }
+}
+@media (max-width: 400px) {
+    .hero-copy h1 {
+        font-size: 42px;
+    }
+    .home-facts {
+        gap: 23px;
+    }
+    .home-facts > p {
+        display: none;
+    }
+}

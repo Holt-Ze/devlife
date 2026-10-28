@@ -1,0 +1,25 @@
+:root {
+    color-scheme: light dark;
+    --base-text-color: light-dark(#253139, #e5e9ed);
+    --base-background-color: light-dark(#f4f7f7, #101316);
+    --panel-background: light-dark(#ffffff, #161a1e);
+    --panel-border: light-dark(#dbe3e3, #292f35);
+    --muted-text: light-dark(#65747c, #87939e);
+    --base-shadow: light-dark(#00000010, #23456710);
+
+    --color-grade-0: light-dark(#4d626b, #b9c4ce);
+    --color-grade-1: light-dark(#2679ad, #80bded);
+    --color-grade-2: light-dark(#8050ba, #bfa2ed);
+    --color-grade-3: light-dark(#997022, #e8c073);
+
+    --color-success: light-dark(#167851, #87d9ad);
+    --color-info: light-dark(#2876a5, #80bded);
+    --color-error: light-dark(#e42b2b, #ff6969);
+    --color-primary: var(--color-success);
+    --color-secondary: var(--color-info);
+}
+
+.grade-0 { --grade-color: var(--color-grade-0); }
+.grade-1 { --grade-color: var(--color-grade-1); }
+.grade-2 { --grade-color: var(--color-grade-2); }
+.grade-3 { --grade-color: var(--color-grade-3); }

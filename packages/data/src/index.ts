@@ -1,0 +1,13 @@
+// 主题内容直接使用可审查的 TypeScript，运行时不再依赖原版 Excel。
+export type { Event, EventGrade, EventEffect, EventBranch, EventChoice, EventDialogue } from './event.types'
+export { TalentGrade } from './talent.types'
+export type { Talent, TalentEffect } from './talent.types'
+export type { Age, EventWithWeight } from './age.types'
+export type { Character, CharacterProperty } from './character.types'
+export { AchievementGrade, AchievementOpportunity } from './achievement.types'
+export type { Achievement } from './achievement.types'
+export { SpecialThanksGroup } from './specialthanks.types'
+export type { SpecialThanks } from './specialthanks.types'
+export { talents } from './programmer/talents'
+export { events, ages, endings, CareerQuarters } from './programmer/events'
+export { achievements, characters, specialThanks } from './programmer/profile'
