@@ -18,6 +18,7 @@ import { ChoiceChanges } from '@/components/Dialogue'
 import { toastAchvs, toastMsg } from '@/toast'
 import Talent from '@/components/Talent'
 import './Summary.css'
+import { saveCareer } from '@/storage/postgres'
 
 function Judges() {
     const judges = useEndJudge()
@@ -67,6 +68,12 @@ function TalentList({ picked, picker }: TalentListProps) {
 
 export default function Summary() {
     const state = useGameState()!
+    const archiveId = useRef(crypto.randomUUID())
+    useEffect(() => {
+        void saveCareer(archiveId.current, state).then(ok => {
+            if (!ok) toastMsg('生涯历史暂未保存到服务端，本地档案仍会保留', 'career-save-error')
+        })
+    }, [state])
     const ending = Array.from(endings).find(([id]) => state.events.has(id))?.[1]
     const isClassic = useIsClassic()
     const [locked, picker, end] = useEnd()

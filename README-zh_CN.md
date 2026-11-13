@@ -43,6 +43,10 @@ pnpm build:console
 
 当前采用关键节点决策，尚未加入工资结算或公司经营。
 
+## 课程数据库设计
+
+已按现有完整 36 季度软件迁移到原生 PostgreSQL 18.6，共 18 张业务表、98 个字段、21 条外键。执行 `pnpm setup:local` 自动初始化与构建，`pnpm start:local` 启动数据库版网页。软件已接入内容读取、跨局档案与已完成生涯持久化。详见 [运行说明](packages/database/README.md) 和 [ER 图与数据字典](docs/database/index.html)。PDF 报告位于 `output/pdf/`。
+
 ## 修改内容
 
 - `packages/data/src/programmer/`：28 个天赋、职业事件、20 个成就、6 种背景及结局。

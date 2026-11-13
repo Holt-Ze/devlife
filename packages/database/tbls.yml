@@ -1,0 +1,20 @@
+name: 程序员职业生涯模拟系统
+desc: PostgreSQL 课程基础版。五个核心实体，24 季度；events 通过发布校验复制到不可变快照，该关系不是数据库外键。
+include:
+  - public.users
+  - public.events
+  - public.content_versions
+  - public.career_runs
+  - public.run_actions
+er:
+  format: svg
+  comment: true
+  hideDef: false
+  distance: 2
+lint:
+  requireTableComment:
+    enabled: true
+  requireColumnComment:
+    enabled: true
+  requireForeignKeyIndex:
+    enabled: true

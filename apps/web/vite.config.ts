@@ -18,6 +18,7 @@ export default defineConfig({
     plugins: [react()],
     resolve: { tsconfigPaths: true },
     base: './',
+    server: { proxy: { '/api': 'http://127.0.0.1:8787', '/healthz': 'http://127.0.0.1:8787' } },
     build: {
         chunkSizeWarningLimit: 1500,
         rolldownOptions: {

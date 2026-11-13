@@ -1,0 +1,48 @@
+{
+  "checksum": "59886fb98ad633cdf2d740a60e59fc96c64e900fc9cca97a5944c3d8620d1bbe",
+  "counts": {
+    "users": 2,
+    "events": 98,
+    "event_choices": 25,
+    "event_branches": 16,
+    "quarter_events": 338,
+    "talents": 28,
+    "achievements": 20,
+    "characters": 6,
+    "character_talents": 18,
+    "endings": 6,
+    "content_versions": 1,
+    "player_profiles": 1,
+    "career_runs": 2,
+    "run_actions": 16,
+    "archive_imports": 1
+  },
+  "sourceCounts": {
+    "events": 98,
+    "choices": 25,
+    "talents": 28,
+    "achievements": 20,
+    "characters": 6,
+    "endings": 6,
+    "quarters": 37
+  },
+  "snapshotMatchesSource": true,
+  "eventDefinitionsMatch": true,
+  "talentDefinitionsMatch": true,
+  "migrations": [
+    "202611090001_initial.mjs",
+    "202611100002_game36.mjs",
+    "202611100003_comments.mjs"
+  ],
+  "fieldCount": 98,
+  "tableCount": 18,
+  "foreignKeyCount": 21,
+  "commentCount": 98,
+  "browserValidation": {
+    "completedCareers": 2,
+    "decisionRecords": 16,
+    "quarter": 36,
+    "profileTimes": 2,
+    "source": "本轮运行期间新增的完成生涯记录；不作为既有用户历史迁移证据"
+  }
+}

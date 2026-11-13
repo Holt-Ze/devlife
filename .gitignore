@@ -118,3 +118,7 @@ template/public
 public/data
 
 *.cache.*
+
+# Portable documentation tools (downloaded with checksum verification).
+/.tools/
+/.local/

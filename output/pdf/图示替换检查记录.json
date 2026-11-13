@@ -1,0 +1,41 @@
+{
+  "output": "C:\\Users\\Holt\\Documents\\Project\\remake\\output\\pdf\\程序员职业生涯模拟系统_数据库设计与真实迁移报告_图示替换版.pdf",
+  "pages": 21,
+  "replaced": [
+    {
+      "page": 5,
+      "image": "C:\\Users\\Holt\\Downloads\\完整18表业务关系图.png",
+      "imagePixels": [
+        1916,
+        821
+      ],
+      "title": "04 完整 ER 图"
+    },
+    {
+      "page": 6,
+      "image": "C:\\Users\\Holt\\Downloads\\ChatGPT 图像 2026年11月10日 10_26_45-1.png",
+      "imagePixels": [
+        1672,
+        941
+      ],
+      "title": "05 内容域 ER 图"
+    },
+    {
+      "page": 7,
+      "image": "C:\\Users\\Holt\\Downloads\\ChatGPT 图像 2026年11月10日 10_26_48-2.png",
+      "imagePixels": [
+        1672,
+        941
+      ],
+      "title": "06 持久化域 ER 图"
+    }
+  ],
+  "other18PagesUnchanged": true,
+  "attachmentsPreserved": 8,
+  "bookmarksPreserved": 12,
+  "sha256": "c3bb94b83ff69725b7af1fcdcc6bdf3e1be66649c63882fef49b3305f92f1ca4",
+  "bytes": 5639268,
+  "originalImagesPreservedPixelForPixel": true,
+  "renderedPageCount": 21,
+  "visualReview": "21 pages reviewed; replacement pages inspected at higher resolution; no clipping or overlap observed"
+}

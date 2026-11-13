@@ -1,5 +1,6 @@
 import * as biliToy from '@remake/thirdparty-bili-toy'
 import * as local from './local'
+import * as postgres from './postgres'
 
 interface Storage {
     init(): Promise<void>
@@ -12,6 +13,10 @@ if (import.meta.env.VITE_CHANNEL === 'bili') {
     storage.init = biliToy.init
     storage.get = biliToy.get
     storage.set = biliToy.set
+} else if (import.meta.env.VITE_STORAGE_MODE === 'postgres') {
+    storage.init = postgres.init
+    storage.get = postgres.get
+    storage.set = postgres.set
 } else {
     storage.init = async () => {}
     storage.get = local.get

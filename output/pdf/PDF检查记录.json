@@ -1,0 +1,16 @@
+{
+  "file": "C:\\Users\\Holt\\Documents\\Project\\remake\\output\\pdf\\程序员职业生涯模拟系统_数据库设计与真实迁移报告.pdf",
+  "pages": 21,
+  "attachments": 8,
+  "tableCount": 18,
+  "fieldCount": 98,
+  "foreignKeyCount": 21,
+  "missingTables": [],
+  "sha256": "6108153efe14b6bfce4315fd0638be7db9ffc592ee284210056e59139beacaf5",
+  "bytes": 563167,
+  "renderedPageCount": 21,
+  "visualReview": "21 pages inspected; ER and dictionary details inspected; no clipping or overlap observed",
+  "embeddedAttachmentsChecked": 8,
+  "missingFieldNames": [],
+  "credentialsIncluded": false
+}

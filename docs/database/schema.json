@@ -1,0 +1,3333 @@
+{
+  "name": "DEVLIFE / 36-quarter full database",
+  "desc": "实际 PostgreSQL 18.6 元数据；完整 36 季度软件。",
+  "tables": [
+    {
+      "name": "public.users",
+      "type": "BASE TABLE",
+      "comment": "用户：预置玩家和管理员；归属与授权由服务端核验",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "用户唯一标识，由数据库生成 UUID"
+        },
+        {
+          "name": "username",
+          "type": "varchar(32)",
+          "nullable": false,
+          "comment": "登录名，区分大小写，去空白后长度 3–32，唯一"
+        },
+        {
+          "name": "password_hash",
+          "type": "text",
+          "nullable": false,
+          "comment": "scrypt 口令哈希，含算法参数和随机盐，禁止保存明文"
+        },
+        {
+          "name": "role",
+          "type": "varchar(10)",
+          "nullable": false,
+          "default": "'player'::character varying",
+          "comment": "用户角色：player 玩家 / admin 管理员"
+        },
+        {
+          "name": "auth_version",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "comment": "会话失效版本，非负整数，修改口令后递增"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "创建时间，带时区"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "users_pkey",
+          "def": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)",
+          "table": "public.users",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "users_username_key",
+          "def": "CREATE UNIQUE INDEX users_username_key ON public.users USING btree (username)",
+          "table": "public.users",
+          "columns": [
+            "username"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "users_auth_version_check",
+          "type": "CHECK",
+          "def": "CHECK ((auth_version \u003e= 0))",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "auth_version"
+          ]
+        },
+        {
+          "name": "users_auth_version_not_null",
+          "type": "n",
+          "def": "NOT NULL auth_version",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "auth_version"
+          ]
+        },
+        {
+          "name": "users_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "users_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "users_password_hash_not_null",
+          "type": "n",
+          "def": "NOT NULL password_hash",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "password_hash"
+          ]
+        },
+        {
+          "name": "users_password_nonblank",
+          "type": "CHECK",
+          "def": "CHECK ((length(password_hash) \u003e 0))",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "password_hash"
+          ]
+        },
+        {
+          "name": "users_role_check",
+          "type": "CHECK",
+          "def": "CHECK (((role)::text = ANY ((ARRAY['player'::character varying, 'admin'::character varying])::text[])))",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "role"
+          ]
+        },
+        {
+          "name": "users_role_not_null",
+          "type": "n",
+          "def": "NOT NULL role",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "role"
+          ]
+        },
+        {
+          "name": "users_username_nonblank",
+          "type": "CHECK",
+          "def": "CHECK (((length(btrim((username)::text)) \u003e= 3) AND (length(btrim((username)::text)) \u003c= 32)))",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "username"
+          ]
+        },
+        {
+          "name": "users_username_not_null",
+          "type": "n",
+          "def": "NOT NULL username",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "username"
+          ]
+        },
+        {
+          "name": "users_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "users_username_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (username)",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "username"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.events",
+      "type": "BASE TABLE",
+      "comment": "完整 36 季度游戏的事件目录；草稿和完整定义，已发布快照独立保存",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "事件草稿 UUID"
+        },
+        {
+          "name": "code",
+          "type": "varchar(40)",
+          "nullable": false,
+          "comment": "稳定编码 event-源ID；与 source_id 唯一对应"
+        },
+        {
+          "name": "text",
+          "type": "text",
+          "nullable": false,
+          "comment": "事件叙述，非空文本"
+        },
+        {
+          "name": "choices",
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'[]'::jsonb",
+          "comment": "原始选项 JSON 数组，含 id、label、description、event、condition、effect；并投影到 event_choices"
+        },
+        {
+          "name": "effects",
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb",
+          "comment": "原引擎属性效果：CHR 沟通、INT 技术、STR 健康、MNY 积蓄、SPR 心态等；均为游戏点数"
+        },
+        {
+          "name": "revision",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "comment": "草稿乐观锁版本，服务端用 expectedRevision 比较后递增"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "最近修改时间；服务端更新草稿时显式刷新"
+        },
+        {
+          "name": "source_id",
+          "type": "integer",
+          "nullable": true,
+          "comment": "TypeScript 原事件整数 ID，旧 24 季度条目可空"
+        },
+        {
+          "name": "definition",
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb",
+          "comment": "完整原事件定义，保留 grade、dialogue、branch、choices、include、exclude、NoRandom 等"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "events_pkey",
+          "def": "CREATE UNIQUE INDEX events_pkey ON public.events USING btree (id)",
+          "table": "public.events",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "events_code_key",
+          "def": "CREATE UNIQUE INDEX events_code_key ON public.events USING btree (code)",
+          "table": "public.events",
+          "columns": [
+            "code"
+          ]
+        },
+        {
+          "name": "events_source_id_key",
+          "def": "CREATE UNIQUE INDEX events_source_id_key ON public.events USING btree (source_id)",
+          "table": "public.events",
+          "columns": [
+            "source_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "events_choices_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(choices) = 'array'::text))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "choices"
+          ]
+        },
+        {
+          "name": "events_choices_not_null",
+          "type": "n",
+          "def": "NOT NULL choices",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "choices"
+          ]
+        },
+        {
+          "name": "events_code_check",
+          "type": "CHECK",
+          "def": "CHECK ((length(btrim((code)::text)) \u003e 0))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "code"
+          ]
+        },
+        {
+          "name": "events_code_not_null",
+          "type": "n",
+          "def": "NOT NULL code",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "code"
+          ]
+        },
+        {
+          "name": "events_definition_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(definition) = 'object'::text))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "definition"
+          ]
+        },
+        {
+          "name": "events_definition_not_null",
+          "type": "n",
+          "def": "NOT NULL definition",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "definition"
+          ]
+        },
+        {
+          "name": "events_effects_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(effects) = 'object'::text))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "effects"
+          ]
+        },
+        {
+          "name": "events_effects_not_null",
+          "type": "n",
+          "def": "NOT NULL effects",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "effects"
+          ]
+        },
+        {
+          "name": "events_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "events_revision_check",
+          "type": "CHECK",
+          "def": "CHECK ((revision \u003e= 0))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "revision"
+          ]
+        },
+        {
+          "name": "events_revision_not_null",
+          "type": "n",
+          "def": "NOT NULL revision",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "revision"
+          ]
+        },
+        {
+          "name": "events_source_id_check",
+          "type": "CHECK",
+          "def": "CHECK ((source_id \u003e 0))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "source_id"
+          ]
+        },
+        {
+          "name": "events_text_check",
+          "type": "CHECK",
+          "def": "CHECK ((length(btrim(text)) \u003e 0))",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "text"
+          ]
+        },
+        {
+          "name": "events_text_not_null",
+          "type": "n",
+          "def": "NOT NULL text",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "text"
+          ]
+        },
+        {
+          "name": "events_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
+          ]
+        },
+        {
+          "name": "events_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "events_code_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (code)",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "code"
+          ]
+        },
+        {
+          "name": "events_source_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (source_id)",
+          "table": "public.events",
+          "referenced_table": "",
+          "columns": [
+            "source_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.content_versions",
+      "type": "BASE TABLE",
+      "comment": "已发布的不可变内容快照；只允许插入和读取，包含全部事件、季度表及结局规则",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "内容版本 UUID，存档固定引用此版本"
+        },
+        {
+          "name": "snapshot",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "完整 36 季度源内容：events、talents、achievements、characters、ages、endings、specialThanks 及格式版本"
+        },
+        {
+          "name": "checksum",
+          "type": "character(64)",
+          "nullable": false,
+          "comment": "应用按键排序并序列化快照后计算的 SHA-256，小写十六进制"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "发布者用户 UUID，外键 RESTRICT；管理员权限在服务端核验"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "发布时间，带时区"
+        },
+        {
+          "name": "source_tag",
+          "type": "varchar(64)",
+          "nullable": false,
+          "default": "'course24'::character varying",
+          "comment": "内容来源与格式标识，game36 表示当前软件完整内容"
+        },
+        {
+          "name": "career_quarters",
+          "type": "smallint",
+          "nullable": false,
+          "default": "24",
+          "comment": "内容适用的季度总数，当前软件为 36"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "content_versions_pkey",
+          "def": "CREATE UNIQUE INDEX content_versions_pkey ON public.content_versions USING btree (id)",
+          "table": "public.content_versions",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "content_versions_checksum_key",
+          "def": "CREATE UNIQUE INDEX content_versions_checksum_key ON public.content_versions USING btree (checksum)",
+          "table": "public.content_versions",
+          "columns": [
+            "checksum"
+          ]
+        },
+        {
+          "name": "content_versions_created_by_idx",
+          "def": "CREATE INDEX content_versions_created_by_idx ON public.content_versions USING btree (created_by)",
+          "table": "public.content_versions",
+          "columns": [
+            "created_by"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "content_versions_career_quarters_check",
+          "type": "CHECK",
+          "def": "CHECK ((career_quarters = ANY (ARRAY[24, 36])))",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "career_quarters"
+          ]
+        },
+        {
+          "name": "content_versions_career_quarters_not_null",
+          "type": "n",
+          "def": "NOT NULL career_quarters",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "career_quarters"
+          ]
+        },
+        {
+          "name": "content_versions_checksum_check",
+          "type": "CHECK",
+          "def": "CHECK ((checksum ~ '^[0-9a-f]{64}$'::text))",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "checksum"
+          ]
+        },
+        {
+          "name": "content_versions_checksum_not_null",
+          "type": "n",
+          "def": "NOT NULL checksum",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "checksum"
+          ]
+        },
+        {
+          "name": "content_versions_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "content_versions_created_by_not_null",
+          "type": "n",
+          "def": "NOT NULL created_by",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "created_by"
+          ]
+        },
+        {
+          "name": "content_versions_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "content_versions_snapshot_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(snapshot) = 'object'::text))",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "snapshot"
+          ]
+        },
+        {
+          "name": "content_versions_snapshot_not_null",
+          "type": "n",
+          "def": "NOT NULL snapshot",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "snapshot"
+          ]
+        },
+        {
+          "name": "content_versions_source_tag_not_null",
+          "type": "n",
+          "def": "NOT NULL source_tag",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "source_tag"
+          ]
+        },
+        {
+          "name": "content_versions_created_by_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.content_versions",
+          "referenced_table": "public.users",
+          "columns": [
+            "created_by"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "content_versions_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "content_versions_checksum_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (checksum)",
+          "table": "public.content_versions",
+          "referenced_table": "",
+          "columns": [
+            "checksum"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "content_versions_immutable",
+          "def": "CREATE TRIGGER content_versions_immutable BEFORE DELETE OR UPDATE ON public.content_versions FOR EACH ROW EXECUTE FUNCTION reject_content_version_mutation()"
+        },
+        {
+          "name": "content_versions_no_truncate",
+          "def": "CREATE TRIGGER content_versions_no_truncate BEFORE TRUNCATE ON public.content_versions FOR EACH STATEMENT EXECUTE FUNCTION reject_content_version_mutation()"
+        }
+      ]
+    },
+    {
+      "name": "public.career_runs",
+      "type": "BASE TABLE",
+      "comment": "职业生涯历史，保存当前 36 季度原引擎状态快照；客户端计算，服务端归档",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "存档 UUID"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "存档所有者 UUID，服务端每次读写均核验归属"
+        },
+        {
+          "name": "content_version_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "开局时固定的内容版本 UUID，后续发布不替换"
+        },
+        {
+          "name": "quarter",
+          "type": "smallint",
+          "nullable": false,
+          "default": "0",
+          "comment": "原引擎已完成季度，当前软件 0 到 36"
+        },
+        {
+          "name": "state",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "原 GameState 的 JSON 表示：props、life、talents、events、achievements、talentTriggers、pendingChoice、decisions"
+        },
+        {
+          "name": "rng_state",
+          "type": "text",
+          "nullable": false,
+          "comment": "随机状态标识；client-unavailable 表示客户端未提供可恢复随机状态"
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "'ready'::character varying",
+          "comment": "ready、awaiting_choice、ended；当前接入保存的是 ended 生涯历史"
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "comment": "当前归档记录的决定数量；进行中动作版本控制尚未接入"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "开局时间，带时区"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "最后成功保存时间，服务端显式更新"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "career_runs_pkey",
+          "def": "CREATE UNIQUE INDEX career_runs_pkey ON public.career_runs USING btree (id)",
+          "table": "public.career_runs",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "career_runs_user_created_idx",
+          "def": "CREATE INDEX career_runs_user_created_idx ON public.career_runs USING btree (user_id, created_at DESC)",
+          "table": "public.career_runs",
+          "columns": [
+            "user_id",
+            "created_at"
+          ]
+        },
+        {
+          "name": "career_runs_content_version_idx",
+          "def": "CREATE INDEX career_runs_content_version_idx ON public.career_runs USING btree (content_version_id)",
+          "table": "public.career_runs",
+          "columns": [
+            "content_version_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "career_runs_content_version_id_not_null",
+          "type": "n",
+          "def": "NOT NULL content_version_id",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "content_version_id"
+          ]
+        },
+        {
+          "name": "career_runs_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "career_runs_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "career_runs_quarter_check",
+          "type": "CHECK",
+          "def": "CHECK (((quarter \u003e= 0) AND (quarter \u003c= 36)))",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "quarter"
+          ]
+        },
+        {
+          "name": "career_runs_quarter_not_null",
+          "type": "n",
+          "def": "NOT NULL quarter",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "quarter"
+          ]
+        },
+        {
+          "name": "career_runs_rng_state_check",
+          "type": "CHECK",
+          "def": "CHECK ((length(btrim(rng_state)) \u003e 0))",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "rng_state"
+          ]
+        },
+        {
+          "name": "career_runs_rng_state_not_null",
+          "type": "n",
+          "def": "NOT NULL rng_state",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "rng_state"
+          ]
+        },
+        {
+          "name": "career_runs_state_not_null",
+          "type": "n",
+          "def": "NOT NULL state",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "state"
+          ]
+        },
+        {
+          "name": "career_runs_state_object",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(state) = 'object'::text))",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "state"
+          ]
+        },
+        {
+          "name": "career_runs_status_check",
+          "type": "CHECK",
+          "def": "CHECK (((status)::text = ANY ((ARRAY['ready'::character varying, 'awaiting_choice'::character varying, 'ended'::character varying])::text[])))",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "name": "career_runs_status_not_null",
+          "type": "n",
+          "def": "NOT NULL status",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "name": "career_runs_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
+          ]
+        },
+        {
+          "name": "career_runs_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "career_runs_version_check",
+          "type": "CHECK",
+          "def": "CHECK ((version \u003e= 0))",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        },
+        {
+          "name": "career_runs_version_not_null",
+          "type": "n",
+          "def": "NOT NULL version",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        },
+        {
+          "name": "career_runs_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.career_runs",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "career_runs_content_version_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (content_version_id) REFERENCES content_versions(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.career_runs",
+          "referenced_table": "public.content_versions",
+          "columns": [
+            "content_version_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "career_runs_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.career_runs",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.run_actions",
+      "type": "BASE TABLE",
+      "comment": "已结算动作与幂等结果：同存档同 request_id 只允许一条",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "动作记录 UUID"
+        },
+        {
+          "name": "run_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "所属存档 UUID，外键 RESTRICT；唯一索引前缀同时支持按存档查询"
+        },
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "调用方生成的幂等 UUID，重试必须复用"
+        },
+        {
+          "name": "payload_hash",
+          "type": "character(64)",
+          "nullable": false,
+          "comment": "规范化业务载荷的 SHA-256，用于拒绝同键异载荷"
+        },
+        {
+          "name": "result",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "原始选择决定及结果快照；客户端历史导入记录不等于服务端权威结算"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "成功提交时间，带时区"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "run_actions_pkey",
+          "def": "CREATE UNIQUE INDEX run_actions_pkey ON public.run_actions USING btree (id)",
+          "table": "public.run_actions",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "run_actions_request_unique",
+          "def": "CREATE UNIQUE INDEX run_actions_request_unique ON public.run_actions USING btree (run_id, request_id)",
+          "table": "public.run_actions",
+          "columns": [
+            "run_id",
+            "request_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "run_actions_created_at_not_null",
+          "type": "n",
+          "def": "NOT NULL created_at",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "created_at"
+          ]
+        },
+        {
+          "name": "run_actions_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "run_actions_payload_hash_check",
+          "type": "CHECK",
+          "def": "CHECK ((payload_hash ~ '^[0-9a-f]{64}$'::text))",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "payload_hash"
+          ]
+        },
+        {
+          "name": "run_actions_payload_hash_not_null",
+          "type": "n",
+          "def": "NOT NULL payload_hash",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "payload_hash"
+          ]
+        },
+        {
+          "name": "run_actions_request_id_not_null",
+          "type": "n",
+          "def": "NOT NULL request_id",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "request_id"
+          ]
+        },
+        {
+          "name": "run_actions_result_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(result) = 'object'::text))",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "result"
+          ]
+        },
+        {
+          "name": "run_actions_result_not_null",
+          "type": "n",
+          "def": "NOT NULL result",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "result"
+          ]
+        },
+        {
+          "name": "run_actions_run_id_not_null",
+          "type": "n",
+          "def": "NOT NULL run_id",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "run_id"
+          ]
+        },
+        {
+          "name": "run_actions_run_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (run_id) REFERENCES career_runs(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.run_actions",
+          "referenced_table": "public.career_runs",
+          "columns": [
+            "run_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "run_actions_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "run_actions_request_unique",
+          "type": "UNIQUE",
+          "def": "UNIQUE (run_id, request_id)",
+          "table": "public.run_actions",
+          "referenced_table": "",
+          "columns": [
+            "run_id",
+            "request_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.talents",
+      "type": "BASE TABLE",
+      "comment": "天赋目录，ID 与现有 TypeScript 内容完全一致",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "源天赋 ID"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false,
+          "comment": "天赋名称"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": false,
+          "comment": "原始天赋说明"
+        },
+        {
+          "name": "grade",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "稀有度 0 普通、1 稀有、2 史诗、3 传说"
+        },
+        {
+          "name": "definition",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "完整原始定义，保留 effect、condition、max、exclude、replacement、points 等规则"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "talents_pkey",
+          "def": "CREATE UNIQUE INDEX talents_pkey ON public.talents USING btree (id)",
+          "table": "public.talents",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "talents_definition_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(definition) = 'object'::text))",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "definition"
+          ]
+        },
+        {
+          "name": "talents_definition_not_null",
+          "type": "n",
+          "def": "NOT NULL definition",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "definition"
+          ]
+        },
+        {
+          "name": "talents_description_not_null",
+          "type": "n",
+          "def": "NOT NULL description",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "description"
+          ]
+        },
+        {
+          "name": "talents_grade_check",
+          "type": "CHECK",
+          "def": "CHECK (((grade \u003e= 0) AND (grade \u003c= 3)))",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "grade"
+          ]
+        },
+        {
+          "name": "talents_grade_not_null",
+          "type": "n",
+          "def": "NOT NULL grade",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "grade"
+          ]
+        },
+        {
+          "name": "talents_id_check",
+          "type": "CHECK",
+          "def": "CHECK ((id \u003e 0))",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "talents_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "talents_name_not_null",
+          "type": "n",
+          "def": "NOT NULL name",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "name"
+          ]
+        },
+        {
+          "name": "talents_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.talents",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.achievements",
+      "type": "BASE TABLE",
+      "comment": "跨局成就目录，保留原始条件表达式及触发时机",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "源成就 ID"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false,
+          "comment": "成就名称"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": false,
+          "comment": "成就说明"
+        },
+        {
+          "name": "grade",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "成就稀有度 0 到 3"
+        },
+        {
+          "name": "condition",
+          "type": "text",
+          "nullable": false,
+          "comment": "原引擎条件表达式，不转换为 SQL 执行"
+        },
+        {
+          "name": "opportunity",
+          "type": "varchar(16)",
+          "nullable": false,
+          "comment": "判定时机 START、TRAJECTORY、SUMMARY、END"
+        },
+        {
+          "name": "hidden",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false",
+          "comment": "是否为隐藏成就"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "achievements_pkey",
+          "def": "CREATE UNIQUE INDEX achievements_pkey ON public.achievements USING btree (id)",
+          "table": "public.achievements",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "achievements_condition_not_null",
+          "type": "n",
+          "def": "NOT NULL condition",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "condition"
+          ]
+        },
+        {
+          "name": "achievements_description_not_null",
+          "type": "n",
+          "def": "NOT NULL description",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "description"
+          ]
+        },
+        {
+          "name": "achievements_grade_check",
+          "type": "CHECK",
+          "def": "CHECK (((grade \u003e= 0) AND (grade \u003c= 3)))",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "grade"
+          ]
+        },
+        {
+          "name": "achievements_grade_not_null",
+          "type": "n",
+          "def": "NOT NULL grade",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "grade"
+          ]
+        },
+        {
+          "name": "achievements_hidden_not_null",
+          "type": "n",
+          "def": "NOT NULL hidden",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "hidden"
+          ]
+        },
+        {
+          "name": "achievements_id_check",
+          "type": "CHECK",
+          "def": "CHECK ((id \u003e 0))",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "achievements_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "achievements_name_not_null",
+          "type": "n",
+          "def": "NOT NULL name",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "name"
+          ]
+        },
+        {
+          "name": "achievements_opportunity_check",
+          "type": "CHECK",
+          "def": "CHECK (((opportunity)::text = ANY ((ARRAY['START'::character varying, 'TRAJECTORY'::character varying, 'SUMMARY'::character varying, 'END'::character varying])::text[])))",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "opportunity"
+          ]
+        },
+        {
+          "name": "achievements_opportunity_not_null",
+          "type": "n",
+          "def": "NOT NULL opportunity",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "opportunity"
+          ]
+        },
+        {
+          "name": "achievements_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.achievements",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.characters",
+      "type": "BASE TABLE",
+      "comment": "预置职业出身，保留原始四项初始属性",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "源职业出身 ID"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false,
+          "comment": "职业出身名称"
+        },
+        {
+          "name": "properties",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "CHR 沟通、INT 技术、STR 健康、MNY 积蓄的初始点数"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "characters_pkey",
+          "def": "CREATE UNIQUE INDEX characters_pkey ON public.characters USING btree (id)",
+          "table": "public.characters",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "characters_id_check",
+          "type": "CHECK",
+          "def": "CHECK ((id \u003e 0))",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "characters_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "characters_name_not_null",
+          "type": "n",
+          "def": "NOT NULL name",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "name"
+          ]
+        },
+        {
+          "name": "characters_properties_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(properties) = 'object'::text))",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "properties"
+          ]
+        },
+        {
+          "name": "characters_properties_not_null",
+          "type": "n",
+          "def": "NOT NULL properties",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "properties"
+          ]
+        },
+        {
+          "name": "characters_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.characters",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.character_talents",
+      "type": "BASE TABLE",
+      "comment": "职业出身与天赋的多对多关联，同时保存原始顺序",
+      "columns": [
+        {
+          "name": "character_id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "所属职业出身 ID"
+        },
+        {
+          "name": "talent_id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "绑定天赋 ID"
+        },
+        {
+          "name": "position",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "天赋在该出身中的零起点顺序"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "character_talents_pkey",
+          "def": "CREATE UNIQUE INDEX character_talents_pkey ON public.character_talents USING btree (character_id, talent_id)",
+          "table": "public.character_talents",
+          "columns": [
+            "character_id",
+            "talent_id"
+          ]
+        },
+        {
+          "name": "character_talents_character_id_position_key",
+          "def": "CREATE UNIQUE INDEX character_talents_character_id_position_key ON public.character_talents USING btree (character_id, \"position\")",
+          "table": "public.character_talents",
+          "columns": [
+            "character_id",
+            "position"
+          ]
+        },
+        {
+          "name": "character_talents_talent_id_idx",
+          "def": "CREATE INDEX character_talents_talent_id_idx ON public.character_talents USING btree (talent_id)",
+          "table": "public.character_talents",
+          "columns": [
+            "talent_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "character_talents_character_id_not_null",
+          "type": "n",
+          "def": "NOT NULL character_id",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "character_id"
+          ]
+        },
+        {
+          "name": "character_talents_position_check",
+          "type": "CHECK",
+          "def": "CHECK ((\"position\" \u003e= 0))",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "character_talents_position_not_null",
+          "type": "n",
+          "def": "NOT NULL \"position\"",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "character_talents_talent_id_not_null",
+          "type": "n",
+          "def": "NOT NULL talent_id",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "talent_id"
+          ]
+        },
+        {
+          "name": "character_talents_talent_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.character_talents",
+          "referenced_table": "public.talents",
+          "columns": [
+            "talent_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "character_talents_character_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (character_id) REFERENCES characters(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.character_talents",
+          "referenced_table": "public.characters",
+          "columns": [
+            "character_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "character_talents_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (character_id, talent_id)",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "character_id",
+            "talent_id"
+          ]
+        },
+        {
+          "name": "character_talents_character_id_position_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (character_id, \"position\")",
+          "table": "public.character_talents",
+          "referenced_table": "",
+          "columns": [
+            "character_id",
+            "position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.event_choices",
+      "type": "BASE TABLE",
+      "comment": "八个关键决策场景的选项，关联实际后续结果事件",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "选项所属事件 UUID"
+        },
+        {
+          "name": "code",
+          "type": "varchar(40)",
+          "nullable": false,
+          "comment": "源选项字符串 ID，在同一事件内唯一"
+        },
+        {
+          "name": "position",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "原始选项顺序，零起点"
+        },
+        {
+          "name": "label",
+          "type": "text",
+          "nullable": false,
+          "comment": "按钮文案"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": false,
+          "comment": "选择说明"
+        },
+        {
+          "name": "condition",
+          "type": "text",
+          "nullable": true,
+          "comment": "选项解锁表达式；无条件时为空"
+        },
+        {
+          "name": "locked_reason",
+          "type": "text",
+          "nullable": true,
+          "comment": "未解锁时的原始提示"
+        },
+        {
+          "name": "effects",
+          "type": "jsonb",
+          "nullable": false,
+          "default": "'{}'::jsonb",
+          "comment": "选项直接属性变化，保留原始 INT、CHR 等键"
+        },
+        {
+          "name": "outcome_event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "选择后触发的结果事件 UUID"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "event_choices_pkey",
+          "def": "CREATE UNIQUE INDEX event_choices_pkey ON public.event_choices USING btree (event_id, code)",
+          "table": "public.event_choices",
+          "columns": [
+            "event_id",
+            "code"
+          ]
+        },
+        {
+          "name": "event_choices_event_id_position_key",
+          "def": "CREATE UNIQUE INDEX event_choices_event_id_position_key ON public.event_choices USING btree (event_id, \"position\")",
+          "table": "public.event_choices",
+          "columns": [
+            "event_id",
+            "position"
+          ]
+        },
+        {
+          "name": "event_choices_outcome_event_id_idx",
+          "def": "CREATE INDEX event_choices_outcome_event_id_idx ON public.event_choices USING btree (outcome_event_id)",
+          "table": "public.event_choices",
+          "columns": [
+            "outcome_event_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "event_choices_code_not_null",
+          "type": "n",
+          "def": "NOT NULL code",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "code"
+          ]
+        },
+        {
+          "name": "event_choices_description_not_null",
+          "type": "n",
+          "def": "NOT NULL description",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "description"
+          ]
+        },
+        {
+          "name": "event_choices_effects_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(effects) = 'object'::text))",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "effects"
+          ]
+        },
+        {
+          "name": "event_choices_effects_not_null",
+          "type": "n",
+          "def": "NOT NULL effects",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "effects"
+          ]
+        },
+        {
+          "name": "event_choices_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL event_id",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        },
+        {
+          "name": "event_choices_label_not_null",
+          "type": "n",
+          "def": "NOT NULL label",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "label"
+          ]
+        },
+        {
+          "name": "event_choices_outcome_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL outcome_event_id",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "outcome_event_id"
+          ]
+        },
+        {
+          "name": "event_choices_position_check",
+          "type": "CHECK",
+          "def": "CHECK ((\"position\" \u003e= 0))",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "event_choices_position_not_null",
+          "type": "n",
+          "def": "NOT NULL \"position\"",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "event_choices_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.event_choices",
+          "referenced_table": "public.events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "event_choices_outcome_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (outcome_event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.event_choices",
+          "referenced_table": "public.events",
+          "columns": [
+            "outcome_event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "event_choices_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (event_id, code)",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "event_id",
+            "code"
+          ]
+        },
+        {
+          "name": "event_choices_event_id_position_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (event_id, \"position\")",
+          "table": "public.event_choices",
+          "referenced_table": "",
+          "columns": [
+            "event_id",
+            "position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.event_branches",
+      "type": "BASE TABLE",
+      "comment": "事件自动分支，按原始顺序判定条件",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "起始事件 UUID"
+        },
+        {
+          "name": "position",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "分支判定顺序，零起点"
+        },
+        {
+          "name": "condition",
+          "type": "text",
+          "nullable": false,
+          "comment": "原引擎条件表达式"
+        },
+        {
+          "name": "target_event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "条件满足时跳转到的事件 UUID"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "event_branches_pkey",
+          "def": "CREATE UNIQUE INDEX event_branches_pkey ON public.event_branches USING btree (event_id, \"position\")",
+          "table": "public.event_branches",
+          "columns": [
+            "event_id",
+            "position"
+          ]
+        },
+        {
+          "name": "event_branches_target_event_id_idx",
+          "def": "CREATE INDEX event_branches_target_event_id_idx ON public.event_branches USING btree (target_event_id)",
+          "table": "public.event_branches",
+          "columns": [
+            "target_event_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "event_branches_condition_not_null",
+          "type": "n",
+          "def": "NOT NULL condition",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "condition"
+          ]
+        },
+        {
+          "name": "event_branches_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL event_id",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        },
+        {
+          "name": "event_branches_position_check",
+          "type": "CHECK",
+          "def": "CHECK ((\"position\" \u003e= 0))",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "event_branches_position_not_null",
+          "type": "n",
+          "def": "NOT NULL \"position\"",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "event_branches_target_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL target_event_id",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "target_event_id"
+          ]
+        },
+        {
+          "name": "event_branches_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.event_branches",
+          "referenced_table": "public.events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "event_branches_target_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (target_event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.event_branches",
+          "referenced_table": "public.events",
+          "columns": [
+            "target_event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "event_branches_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (event_id, \"position\")",
+          "table": "public.event_branches",
+          "referenced_table": "",
+          "columns": [
+            "event_id",
+            "position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.quarter_events",
+      "type": "BASE TABLE",
+      "comment": "第 0 到 36 季度的分层事件池，完整保留层级、顺序与权重",
+      "columns": [
+        {
+          "name": "quarter",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "季度编号，0 为入职日，36 为九年复盘"
+        },
+        {
+          "name": "pool_level",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "事件池层级，数值顺序等同源数组"
+        },
+        {
+          "name": "position",
+          "type": "smallint",
+          "nullable": false,
+          "comment": "同层事件顺序"
+        },
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "池内事件 UUID"
+        },
+        {
+          "name": "weight",
+          "type": "double precision",
+          "nullable": false,
+          "comment": "源事件抽取权重，不改写或取整"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "quarter_events_pkey",
+          "def": "CREATE UNIQUE INDEX quarter_events_pkey ON public.quarter_events USING btree (quarter, pool_level, \"position\")",
+          "table": "public.quarter_events",
+          "columns": [
+            "quarter",
+            "pool_level",
+            "position"
+          ]
+        },
+        {
+          "name": "quarter_events_event_id_idx",
+          "def": "CREATE INDEX quarter_events_event_id_idx ON public.quarter_events USING btree (event_id)",
+          "table": "public.quarter_events",
+          "columns": [
+            "event_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "quarter_events_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL event_id",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        },
+        {
+          "name": "quarter_events_pool_level_check",
+          "type": "CHECK",
+          "def": "CHECK ((pool_level \u003e= 0))",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "pool_level"
+          ]
+        },
+        {
+          "name": "quarter_events_pool_level_not_null",
+          "type": "n",
+          "def": "NOT NULL pool_level",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "pool_level"
+          ]
+        },
+        {
+          "name": "quarter_events_position_check",
+          "type": "CHECK",
+          "def": "CHECK ((\"position\" \u003e= 0))",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "quarter_events_position_not_null",
+          "type": "n",
+          "def": "NOT NULL \"position\"",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "position"
+          ]
+        },
+        {
+          "name": "quarter_events_quarter_check",
+          "type": "CHECK",
+          "def": "CHECK (((quarter \u003e= 0) AND (quarter \u003c= 36)))",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "quarter"
+          ]
+        },
+        {
+          "name": "quarter_events_quarter_not_null",
+          "type": "n",
+          "def": "NOT NULL quarter",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "quarter"
+          ]
+        },
+        {
+          "name": "quarter_events_weight_check",
+          "type": "CHECK",
+          "def": "CHECK ((weight \u003e (0)::double precision))",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "weight"
+          ]
+        },
+        {
+          "name": "quarter_events_weight_not_null",
+          "type": "n",
+          "def": "NOT NULL weight",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "weight"
+          ]
+        },
+        {
+          "name": "quarter_events_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.quarter_events",
+          "referenced_table": "public.events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "quarter_events_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (quarter, pool_level, \"position\")",
+          "table": "public.quarter_events",
+          "referenced_table": "",
+          "columns": [
+            "quarter",
+            "pool_level",
+            "position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.endings",
+      "type": "BASE TABLE",
+      "comment": "六类职业结局，每类均引用原始结局事件",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "结局事件 UUID"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false,
+          "comment": "结局名称"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": false,
+          "comment": "结局叙述"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "endings_pkey",
+          "def": "CREATE UNIQUE INDEX endings_pkey ON public.endings USING btree (event_id)",
+          "table": "public.endings",
+          "columns": [
+            "event_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "endings_description_not_null",
+          "type": "n",
+          "def": "NOT NULL description",
+          "table": "public.endings",
+          "referenced_table": "",
+          "columns": [
+            "description"
+          ]
+        },
+        {
+          "name": "endings_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL event_id",
+          "table": "public.endings",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        },
+        {
+          "name": "endings_name_not_null",
+          "type": "n",
+          "def": "NOT NULL name",
+          "table": "public.endings",
+          "referenced_table": "",
+          "columns": [
+            "name"
+          ]
+        },
+        {
+          "name": "endings_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.endings",
+          "referenced_table": "public.events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "endings_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (event_id)",
+          "table": "public.endings",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.player_profiles",
+      "type": "BASE TABLE",
+      "comment": "玩家跨局档案及浏览器迁移状态；软件自动使用本机玩家账号",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "玩家 UUID，与 users 一对零或一"
+        },
+        {
+          "name": "times",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "comment": "已完成生涯次数"
+        },
+        {
+          "name": "locked_talent_id",
+          "type": "integer",
+          "nullable": true,
+          "comment": "保留到下局的一项天赋；无保留时为空"
+        },
+        {
+          "name": "unique_character",
+          "type": "jsonb",
+          "nullable": true,
+          "comment": "原生成角色：property 和 talent；不转换为预置职业出身"
+        },
+        {
+          "name": "highest",
+          "type": "jsonb",
+          "nullable": true,
+          "comment": "已有档案的历史最高属性，可空"
+        },
+        {
+          "name": "lowest",
+          "type": "jsonb",
+          "nullable": true,
+          "comment": "已有档案的历史最低属性，可空"
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "nullable": false,
+          "default": "0",
+          "comment": "档案乐观锁版本，成功写入后加一"
+        },
+        {
+          "name": "initialized",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false",
+          "comment": "是否已首次读取或导入浏览器档案"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "最近保存时间，带时区"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "player_profiles_pkey",
+          "def": "CREATE UNIQUE INDEX player_profiles_pkey ON public.player_profiles USING btree (user_id)",
+          "table": "public.player_profiles",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "player_profiles_locked_talent_id_idx",
+          "def": "CREATE INDEX player_profiles_locked_talent_id_idx ON public.player_profiles USING btree (locked_talent_id)",
+          "table": "public.player_profiles",
+          "columns": [
+            "locked_talent_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "player_profiles_highest_check",
+          "type": "CHECK",
+          "def": "CHECK (((highest IS NULL) OR (jsonb_typeof(highest) = 'object'::text)))",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "highest"
+          ]
+        },
+        {
+          "name": "player_profiles_initialized_not_null",
+          "type": "n",
+          "def": "NOT NULL initialized",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "initialized"
+          ]
+        },
+        {
+          "name": "player_profiles_lowest_check",
+          "type": "CHECK",
+          "def": "CHECK (((lowest IS NULL) OR (jsonb_typeof(lowest) = 'object'::text)))",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "lowest"
+          ]
+        },
+        {
+          "name": "player_profiles_times_check",
+          "type": "CHECK",
+          "def": "CHECK ((times \u003e= 0))",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "times"
+          ]
+        },
+        {
+          "name": "player_profiles_times_not_null",
+          "type": "n",
+          "def": "NOT NULL times",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "times"
+          ]
+        },
+        {
+          "name": "player_profiles_unique_character_check",
+          "type": "CHECK",
+          "def": "CHECK (((unique_character IS NULL) OR (jsonb_typeof(unique_character) = 'object'::text)))",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "unique_character"
+          ]
+        },
+        {
+          "name": "player_profiles_updated_at_not_null",
+          "type": "n",
+          "def": "NOT NULL updated_at",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "updated_at"
+          ]
+        },
+        {
+          "name": "player_profiles_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "player_profiles_version_check",
+          "type": "CHECK",
+          "def": "CHECK ((version \u003e= 0))",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        },
+        {
+          "name": "player_profiles_version_not_null",
+          "type": "n",
+          "def": "NOT NULL version",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        },
+        {
+          "name": "player_profiles_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.player_profiles",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "player_profiles_locked_talent_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (locked_talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.player_profiles",
+          "referenced_table": "public.talents",
+          "columns": [
+            "locked_talent_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "player_profiles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id)",
+          "table": "public.player_profiles",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.profile_talents",
+      "type": "BASE TABLE",
+      "comment": "玩家曾拥有的天赋，以联合主键去重",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "所属玩家 UUID"
+        },
+        {
+          "name": "talent_id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "曾拥有的天赋的目录 ID"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "profile_talents_pkey",
+          "def": "CREATE UNIQUE INDEX profile_talents_pkey ON public.profile_talents USING btree (user_id, talent_id)",
+          "table": "public.profile_talents",
+          "columns": [
+            "user_id",
+            "talent_id"
+          ]
+        },
+        {
+          "name": "profile_talents_talent_id_idx",
+          "def": "CREATE INDEX profile_talents_talent_id_idx ON public.profile_talents USING btree (talent_id)",
+          "table": "public.profile_talents",
+          "columns": [
+            "talent_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profile_talents_talent_id_not_null",
+          "type": "n",
+          "def": "NOT NULL talent_id",
+          "table": "public.profile_talents",
+          "referenced_table": "",
+          "columns": [
+            "talent_id"
+          ]
+        },
+        {
+          "name": "profile_talents_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.profile_talents",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_talents_talent_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_talents",
+          "referenced_table": "public.talents",
+          "columns": [
+            "talent_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profile_talents_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_talents",
+          "referenced_table": "public.player_profiles",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_talents_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id, talent_id)",
+          "table": "public.profile_talents",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "talent_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.profile_events",
+      "type": "BASE TABLE",
+      "comment": "玩家曾经历的事件，以联合主键去重",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "所属玩家 UUID"
+        },
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "曾经历的事件的目录 ID"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "profile_events_pkey",
+          "def": "CREATE UNIQUE INDEX profile_events_pkey ON public.profile_events USING btree (user_id, event_id)",
+          "table": "public.profile_events",
+          "columns": [
+            "user_id",
+            "event_id"
+          ]
+        },
+        {
+          "name": "profile_events_event_id_idx",
+          "def": "CREATE INDEX profile_events_event_id_idx ON public.profile_events USING btree (event_id)",
+          "table": "public.profile_events",
+          "columns": [
+            "event_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profile_events_event_id_not_null",
+          "type": "n",
+          "def": "NOT NULL event_id",
+          "table": "public.profile_events",
+          "referenced_table": "",
+          "columns": [
+            "event_id"
+          ]
+        },
+        {
+          "name": "profile_events_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.profile_events",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_events_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_events",
+          "referenced_table": "public.events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profile_events_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_events",
+          "referenced_table": "public.player_profiles",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_events_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id, event_id)",
+          "table": "public.profile_events",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "event_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.profile_achievements",
+      "type": "BASE TABLE",
+      "comment": "玩家已达成的成就，以联合主键去重",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "所属玩家 UUID"
+        },
+        {
+          "name": "achievement_id",
+          "type": "integer",
+          "nullable": false,
+          "comment": "已达成的成就的目录 ID"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "profile_achievements_pkey",
+          "def": "CREATE UNIQUE INDEX profile_achievements_pkey ON public.profile_achievements USING btree (user_id, achievement_id)",
+          "table": "public.profile_achievements",
+          "columns": [
+            "user_id",
+            "achievement_id"
+          ]
+        },
+        {
+          "name": "profile_achievements_achievement_id_idx",
+          "def": "CREATE INDEX profile_achievements_achievement_id_idx ON public.profile_achievements USING btree (achievement_id)",
+          "table": "public.profile_achievements",
+          "columns": [
+            "achievement_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profile_achievements_achievement_id_not_null",
+          "type": "n",
+          "def": "NOT NULL achievement_id",
+          "table": "public.profile_achievements",
+          "referenced_table": "",
+          "columns": [
+            "achievement_id"
+          ]
+        },
+        {
+          "name": "profile_achievements_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.profile_achievements",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_achievements_achievement_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_achievements",
+          "referenced_table": "public.achievements",
+          "columns": [
+            "achievement_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profile_achievements_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.profile_achievements",
+          "referenced_table": "public.player_profiles",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "profile_achievements_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id, achievement_id)",
+          "table": "public.profile_achievements",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "achievement_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.archive_imports",
+      "type": "BASE TABLE",
+      "comment": "档案导入审计与原始 JSON 备份；同一玩家同一内容仅登记一次",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "comment": "导入记录 UUID"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "comment": "接收档案的玩家 UUID"
+        },
+        {
+          "name": "source",
+          "type": "varchar(40)",
+          "nullable": false,
+          "comment": "来源 browser-localStorage 或明确标记的验证数据"
+        },
+        {
+          "name": "checksum",
+          "type": "character(64)",
+          "nullable": false,
+          "comment": "规范化导入载荷的 SHA-256"
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "nullable": false,
+          "comment": "未覆盖的原始浏览器 profile 与 unique 值，便于追溯"
+        },
+        {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "comment": "实际导入时间，带时区"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "archive_imports_pkey",
+          "def": "CREATE UNIQUE INDEX archive_imports_pkey ON public.archive_imports USING btree (id)",
+          "table": "public.archive_imports",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "archive_imports_user_id_checksum_key",
+          "def": "CREATE UNIQUE INDEX archive_imports_user_id_checksum_key ON public.archive_imports USING btree (user_id, checksum)",
+          "table": "public.archive_imports",
+          "columns": [
+            "user_id",
+            "checksum"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "archive_imports_checksum_check",
+          "type": "CHECK",
+          "def": "CHECK ((checksum ~ '^[0-9a-f]{64}$'::text))",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "checksum"
+          ]
+        },
+        {
+          "name": "archive_imports_checksum_not_null",
+          "type": "n",
+          "def": "NOT NULL checksum",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "checksum"
+          ]
+        },
+        {
+          "name": "archive_imports_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "archive_imports_imported_at_not_null",
+          "type": "n",
+          "def": "NOT NULL imported_at",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "imported_at"
+          ]
+        },
+        {
+          "name": "archive_imports_payload_check",
+          "type": "CHECK",
+          "def": "CHECK ((jsonb_typeof(payload) = 'object'::text))",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "payload"
+          ]
+        },
+        {
+          "name": "archive_imports_payload_not_null",
+          "type": "n",
+          "def": "NOT NULL payload",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "payload"
+          ]
+        },
+        {
+          "name": "archive_imports_source_not_null",
+          "type": "n",
+          "def": "NOT NULL source",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "source"
+          ]
+        },
+        {
+          "name": "archive_imports_user_id_not_null",
+          "type": "n",
+          "def": "NOT NULL user_id",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "archive_imports_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT",
+          "table": "public.archive_imports",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "archive_imports_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "archive_imports_user_id_checksum_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (user_id, checksum)",
+          "table": "public.archive_imports",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "checksum"
+          ]
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "table": "public.content_versions",
+      "columns": [
+        "created_by"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.career_runs",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.career_runs",
+      "columns": [
+        "content_version_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.content_versions",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (content_version_id) REFERENCES content_versions(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.run_actions",
+      "columns": [
+        "run_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.career_runs",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (run_id) REFERENCES career_runs(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.character_talents",
+      "columns": [
+        "talent_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.talents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.character_talents",
+      "columns": [
+        "character_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.characters",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (character_id) REFERENCES characters(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.event_choices",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.event_choices",
+      "columns": [
+        "outcome_event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (outcome_event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.event_branches",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.event_branches",
+      "columns": [
+        "target_event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (target_event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.quarter_events",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.endings",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_one",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.player_profiles",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_one",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.player_profiles",
+      "columns": [
+        "locked_talent_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.talents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (locked_talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_talents",
+      "columns": [
+        "talent_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.talents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (talent_id) REFERENCES talents(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_talents",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.player_profiles",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_events",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_events",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.player_profiles",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_achievements",
+      "columns": [
+        "achievement_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.achievements",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.profile_achievements",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.player_profiles",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES player_profiles(user_id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.archive_imports",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    }
+  ],
+  "functions": [
+    {
+      "name": "public.reject_content_version_mutation",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    }
+  ],
+  "driver": {
+    "name": "postgres",
+    "database_version": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "meta": {
+      "current_schema": "public",
+      "search_paths": [
+        "devlife_owner",
+        "public"
+      ],
+      "dict": {
+        "Functions": "Stored procedures and functions"
+      }
+    }
+  }
+}

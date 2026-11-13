@@ -38,9 +38,10 @@ const Saving = ({ active }: { active: boolean }) => (
 
 /* prettier-ignore */
 export function Game() {
-    const [inited, init] = useInit()
+    const [inited, init, error] = useInit()
     const saving = useWatcher()
-    useEffect(() => { if (!inited) init() }, [inited, init])
+    useEffect(() => { if (!inited && !error) init() }, [inited, init, error])
+    if (error) return <div className="screen loading"><h2>暂时无法读取档案</h2><p>{error}</p><button className="primary" onClick={init}>重试</button></div>
     if (!inited) return <Loading />
     return <><Workspace><Container /></Workspace><ToastContainer /><Saving active={saving} /></>
 }

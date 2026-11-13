@@ -1,0 +1,27 @@
+{
+  "name": "@remake/database",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "migrate": "knex --knexfile knexfile.mjs migrate:latest",
+    "status": "knex --knexfile knexfile.mjs migrate:list",
+    "rollback": "knex --knexfile knexfile.mjs migrate:rollback",
+    "seed": "knex --knexfile knexfile.mjs seed:run",
+    "test": "node --test test/game36.test.mjs",
+    "docs": "node scripts/build-docs36.mjs"
+  },
+  "dependencies": {
+    "knex": "3.3.0",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@electric-sql/pglite-socket": "0.2.11",
+    "tsx": "4.21.0"
+  },
+  "optionalDependencies": {
+    "@embedded-postgres/windows-x64": "18.6.0-beta.19"
+  }
+}

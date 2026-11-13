@@ -1,0 +1,158 @@
+erDiagram
+
+"public.content_versions" }o--|| "public.users" : ""
+"public.career_runs" }o--|| "public.users" : ""
+"public.career_runs" }o--|| "public.content_versions" : ""
+"public.run_actions" }o--|| "public.career_runs" : ""
+"public.character_talents" }o--|| "public.talents" : ""
+"public.character_talents" }o--|| "public.characters" : ""
+"public.event_choices" }o--|| "public.events" : ""
+"public.event_choices" }o--|| "public.events" : ""
+"public.event_branches" }o--|| "public.events" : ""
+"public.event_branches" }o--|| "public.events" : ""
+"public.quarter_events" }o--|| "public.events" : ""
+"public.endings" |o--|| "public.events" : ""
+"public.player_profiles" |o--|| "public.users" : ""
+"public.player_profiles" }o--o| "public.talents" : ""
+"public.profile_talents" }o--|| "public.talents" : ""
+"public.profile_talents" }o--|| "public.player_profiles" : ""
+"public.profile_events" }o--|| "public.events" : ""
+"public.profile_events" }o--|| "public.player_profiles" : ""
+"public.profile_achievements" }o--|| "public.achievements" : ""
+"public.profile_achievements" }o--|| "public.player_profiles" : ""
+"public.archive_imports" }o--|| "public.users" : ""
+
+"public.users" {
+  uuid id
+  varchar_32_ username
+  text password_hash
+  varchar_10_ role
+  integer auth_version
+  timestamp_with_time_zone created_at
+}
+"public.events" {
+  uuid id
+  varchar_40_ code
+  text text
+  jsonb choices
+  jsonb effects
+  integer revision
+  timestamp_with_time_zone updated_at
+  integer source_id
+  jsonb definition
+}
+"public.content_versions" {
+  uuid id
+  jsonb snapshot
+  character_64_ checksum
+  uuid created_by
+  timestamp_with_time_zone created_at
+  varchar_64_ source_tag
+  smallint career_quarters
+}
+"public.career_runs" {
+  uuid id
+  uuid user_id
+  uuid content_version_id
+  smallint quarter
+  jsonb state
+  text rng_state
+  varchar_20_ status
+  integer version
+  timestamp_with_time_zone created_at
+  timestamp_with_time_zone updated_at
+}
+"public.run_actions" {
+  uuid id
+  uuid run_id
+  uuid request_id
+  character_64_ payload_hash
+  jsonb result
+  timestamp_with_time_zone created_at
+}
+"public.talents" {
+  integer id
+  text name
+  text description
+  smallint grade
+  jsonb definition
+}
+"public.achievements" {
+  integer id
+  text name
+  text description
+  smallint grade
+  text condition
+  varchar_16_ opportunity
+  boolean hidden
+}
+"public.characters" {
+  integer id
+  text name
+  jsonb properties
+}
+"public.character_talents" {
+  integer character_id
+  integer talent_id
+  smallint position
+}
+"public.event_choices" {
+  uuid event_id
+  varchar_40_ code
+  smallint position
+  text label
+  text description
+  text condition
+  text locked_reason
+  jsonb effects
+  uuid outcome_event_id
+}
+"public.event_branches" {
+  uuid event_id
+  smallint position
+  text condition
+  uuid target_event_id
+}
+"public.quarter_events" {
+  smallint quarter
+  smallint pool_level
+  smallint position
+  uuid event_id
+  double_precision weight
+}
+"public.endings" {
+  uuid event_id
+  text name
+  text description
+}
+"public.player_profiles" {
+  uuid user_id
+  integer times
+  integer locked_talent_id
+  jsonb unique_character
+  jsonb highest
+  jsonb lowest
+  integer version
+  boolean initialized
+  timestamp_with_time_zone updated_at
+}
+"public.profile_talents" {
+  uuid user_id
+  integer talent_id
+}
+"public.profile_events" {
+  uuid user_id
+  uuid event_id
+}
+"public.profile_achievements" {
+  uuid user_id
+  integer achievement_id
+}
+"public.archive_imports" {
+  uuid id
+  uuid user_id
+  varchar_40_ source
+  character_64_ checksum
+  jsonb payload
+  timestamp_with_time_zone imported_at
+}

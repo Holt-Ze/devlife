@@ -1,0 +1,3523 @@
+{
+  "formatVersion": 2,
+  "source": "game36",
+  "careerQuarters": 36,
+  "events": [
+    {
+      "id": 20000,
+      "event": "你带着电脑和一份新合同报到。工牌领取成功，程序员生涯正式启动。",
+      "grade": 0,
+      "effect": {
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20001,
+      "event": "第一份 Pull Request 收到了十几条修改意见。光标停在回复框里，你准备怎样回应？",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      },
+      "dialogue": {
+        "title": "你的第一次 Code Review",
+        "speaker": "林工",
+        "role": "技术导师",
+        "portrait": "林",
+        "text": "能跑只是第一步。这里有几处边界情况，我们可以一起看看。你想怎么处理？"
+      },
+      "choices": [
+        {
+          "id": "learn",
+          "label": "逐条理解，补上测试再提交",
+          "description": "先把基本功打稳，让这次评审成为一次学习。",
+          "event": 21001
+        },
+        {
+          "id": "discuss",
+          "label": "约一次讨论，讲清设计取舍",
+          "description": "不盲目照改，也不急着反驳，先理解彼此的理由。",
+          "event": 21002
+        },
+        {
+          "id": "rush",
+          "label": "先赶上线，之后再整理",
+          "description": "保住当前进度，但未补齐的边界可能会在以后找上门。",
+          "event": 21003
+        }
+      ]
+    },
+    {
+      "id": 20002,
+      "event": "试用期答辩开始。你打开这几个月的项目记录，向团队展示自己的成果。",
+      "grade": 0,
+      "branch": [
+        {
+          "condition": "INT>=7",
+          "event": 20801
+        },
+        {
+          "condition": "CHR>=7",
+          "event": 20802
+        },
+        {
+          "condition": "AGE>=0",
+          "event": 20803
+        }
+      ]
+    },
+    {
+      "id": 20801,
+      "event": "你讲清了技术方案与取舍，顺利转正。导师说，下个项目可以让你独立负责。",
+      "grade": 1,
+      "effect": {
+        "MNY": 2,
+        "SPR": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20802,
+      "event": "你把协作过程和业务价值讲得很清楚，顺利转正。你的沟通能力被团队记住了。",
+      "grade": 1,
+      "effect": {
+        "CHR": 1,
+        "MNY": 1,
+        "SPR": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20803,
+      "event": "基础还有短板。你和导师制定了补习计划，延长一个月试用后终于转正。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20101,
+      "event": "你读懂了项目里最古老的模块。注释写着“临时方案”，提交日期却是五年前。",
+      "grade": 0,
+      "effect": {
+        "INT": 1
+      }
+    },
+    {
+      "id": 20102,
+      "event": "接口联调出现偏差。你画了一张时序图，和前后端同事一起对齐了约定。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "INT": 1
+      }
+    },
+    {
+      "id": 20103,
+      "event": "你为重复操作写了一个小脚本。省下的半小时，刚好够准时下班。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20104,
+      "event": "第一次值班遇上告警。你按应急手册回滚，系统恢复了，心跳却还没恢复。",
+      "grade": 0,
+      "effect": {
+        "INT": 2,
+        "STR": -1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20105,
+      "event": "你把 Bug 的复现步骤补全，测试同事第一次给你发来了大拇指。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20106,
+      "event": "上线后发现一处边界遗漏。你补上回归测试，也记住了不要只测正常路径。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20107,
+      "event": "你加入公司的羽毛球小组。晚上没有打开 IDE，反而睡得格外踏实。",
+      "grade": 0,
+      "effect": {
+        "STR": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20108,
+      "event": "通勤花掉太多时间。你搬到公司附近，钱包瘪了一点，睡眠多了一点。",
+      "grade": 0,
+      "effect": {
+        "MNY": -1,
+        "STR": 1
+      }
+    },
+    {
+      "id": 20109,
+      "event": "你的技术分享把缓存问题讲得很明白。认真准备的内容真的帮到了别人。",
+      "grade": 1,
+      "effect": {
+        "CHR": 1,
+        "SPR": 1
+      },
+      "include": "INT>=7"
+    },
+    {
+      "id": 20110,
+      "event": "团队请你主持需求澄清。模糊的“优化一下”终于变成了可以验收的清单。",
+      "grade": 1,
+      "effect": {
+        "CHR": 1,
+        "MNY": 1
+      },
+      "include": "CHR>=7"
+    },
+    {
+      "id": 20111,
+      "event": "你下班后做了一个小作品，写进简历。从设计到部署都由你独立完成。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20112,
+      "event": "本季项目平稳交付。你把第一笔奖金存起来，觉得生活开始有了缓冲。",
+      "grade": 0,
+      "effect": {
+        "MNY": 2
+      }
+    },
+    {
+      "id": 20201,
+      "event": "一次慢查询排查，从执行计划一路追到索引设计。性能曲线终于降了下来。",
+      "grade": 0,
+      "effect": {
+        "INT": 2
+      },
+      "include": "INT>=8"
+    },
+    {
+      "id": 20202,
+      "event": "产品临时调整需求。你先确认优先级，再把交付拆成两期，避免了全员通宵。",
+      "grade": 0,
+      "effect": {
+        "CHR": 2,
+        "SPR": 1
+      },
+      "include": "CHR>=8"
+    },
+    {
+      "id": 20203,
+      "event": "你给历史代码补测试。进度看起来很慢，但后来的每次重构都更安心。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20204,
+      "event": "季度冲刺连着几个晚班。项目上线了，你开始考虑这种节奏能持续多久。",
+      "grade": 0,
+      "effect": {
+        "MNY": 2,
+        "STR": -1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20205,
+      "event": "你和同事做了一次结对编程。一个下午，解决了独自卡了三天的问题。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "CHR": 1
+      }
+    },
+    {
+      "id": 20206,
+      "event": "你订好健身时间，并把它当作不可随意取消的日程。今天的提交到此为止。",
+      "grade": 0,
+      "effect": {
+        "STR": 2,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20207,
+      "event": "房租上涨，生活开销多了一笔。你重新整理预算，没有靠冲动消费安慰自己。",
+      "grade": 0,
+      "effect": {
+        "MNY": -1
+      }
+    },
+    {
+      "id": 20208,
+      "event": "你给开源项目提交的修复被合并了。维护者认真写了一句：Thanks for your contribution。",
+      "grade": 2,
+      "effect": {
+        "INT": 2,
+        "CHR": 1,
+        "SPR": 1
+      },
+      "include": "INT>=10",
+      "exclude": "EVT?[20208]"
+    },
+    {
+      "id": 20209,
+      "event": "绩效沟通里，你用数据说明了项目价值。努力终于从“感觉不错”变成了明确的认可。",
+      "grade": 1,
+      "effect": {
+        "MNY": 2,
+        "SPR": 1
+      },
+      "include": "CHR>=9"
+    },
+    {
+      "id": 20210,
+      "event": "新同事来请教环境配置。你整理了一份上手文档，省下了大家反复踩坑的时间。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1
+      }
+    },
+    {
+      "id": 20211,
+      "event": "你经历了一次线上复盘。团队讨论流程缺口，没有把事故简单归咎于某个人。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20212,
+      "event": "猎头发来消息。你没有立刻行动，只把近两年的成果更新进了简历。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20301,
+      "event": "你主导了一次架构评审。比起堆新技术，你更在意复杂度到底值不值得。",
+      "grade": 1,
+      "effect": {
+        "INT": 2,
+        "CHR": 1
+      },
+      "include": "INT>=13"
+    },
+    {
+      "id": 20302,
+      "event": "带新人占用了不少时间。直到他独立修好一个问题，你才体会到传递经验的意义。",
+      "grade": 0,
+      "effect": {
+        "CHR": 2,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20303,
+      "event": "业务进入稳定期。你推动了一轮技术债清理，值班告警明显少了。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "STR": 1
+      }
+    },
+    {
+      "id": 20304,
+      "event": "公司组织调整，熟悉的项目换了负责人。你花了一季重新建立协作关系。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20305,
+      "event": "老同事推荐了一个机会。技术积累和合作口碑，成了比海投更好的敲门砖。",
+      "grade": 1,
+      "effect": {
+        "MNY": 3,
+        "SPR": 1
+      },
+      "include": "(INT>=12)&(CHR>=9)"
+    },
+    {
+      "id": 20306,
+      "event": "你终于用完年假。远离消息通知的几天里，你重新找到了对日常生活的感受。",
+      "grade": 0,
+      "effect": {
+        "STR": 2,
+        "SPR": 2,
+        "MNY": -1
+      }
+    },
+    {
+      "id": 20307,
+      "event": "新框架又上了热榜。你先做了小规模验证，最后决定暂时维持成熟方案。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20308,
+      "event": "跨部门合作卡在了责任边界。你把目标与分工写下来，会议终于有了结论。",
+      "grade": 0,
+      "effect": {
+        "CHR": 2
+      }
+    },
+    {
+      "id": 20309,
+      "event": "独立产品收到了第一笔付款。金额不大，却让你看见了工作之外的可能。",
+      "grade": 2,
+      "effect": {
+        "MNY": 3,
+        "SPR": 2
+      },
+      "include": "(INT>=12)&(MNY>=8)",
+      "exclude": "EVT?[20309]"
+    },
+    {
+      "id": 20310,
+      "event": "体检提醒你，久坐并不是小事。你调整工作站，也开始规律活动。",
+      "grade": 0,
+      "effect": {
+        "STR": 1,
+        "MNY": -1
+      }
+    },
+    {
+      "id": 20311,
+      "event": "年终奖到账。你给自己留下一笔学习预算，其余部分存进了备用金。",
+      "grade": 0,
+      "effect": {
+        "MNY": 2,
+        "INT": 1
+      }
+    },
+    {
+      "id": 20312,
+      "event": "项目进入维护期。你下班后学做一道菜，发现生活里的成就感也很具体。",
+      "grade": 0,
+      "effect": {
+        "SPR": 2,
+        "STR": 1
+      }
+    },
+    {
+      "id": 20401,
+      "event": "你开始评估技术方案的长期成本。能维护、能交接，比“看上去很厉害”更重要。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "CHR": 1
+      }
+    },
+    {
+      "id": 20402,
+      "event": "团队遇到难题时会想到你。你给出排查路径，也给年轻同事留下思考的空间。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20403,
+      "event": "你为内部工具做了性能优化。没有发布会，只有同事说了一句“今天顺多了”。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20404,
+      "event": "行业变化让岗位竞争更激烈。你重新梳理可迁移的能力，而非只记住工具用法。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20405,
+      "event": "你被邀请做一次公开分享。讲台上，你讲得最多的是踩坑经历和做过的取舍。",
+      "grade": 1,
+      "effect": {
+        "CHR": 2,
+        "MNY": 1
+      },
+      "include": "INT>=17"
+    },
+    {
+      "id": 20406,
+      "event": "客户续签了你的长期维护服务。稳定的信任，让收入多了一条来源。",
+      "grade": 1,
+      "effect": {
+        "MNY": 3
+      },
+      "include": "EVT?[20309]"
+    },
+    {
+      "id": 20407,
+      "event": "一个周末，你关掉工作群通知去爬山。项目仍在运行，你也可以暂时离线。",
+      "grade": 0,
+      "effect": {
+        "STR": 2,
+        "SPR": 2
+      }
+    },
+    {
+      "id": 20408,
+      "event": "部门预算收紧。你砍掉了两个低价值需求，把有限精力留给重要的事情。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": 1
+      }
+    },
+    {
+      "id": 20409,
+      "event": "过去写的文档帮团队渡过人员交接。你没有出场，经验却仍然发挥了作用。",
+      "grade": 0,
+      "effect": {
+        "CHR": 1,
+        "SPR": 2
+      }
+    },
+    {
+      "id": 20410,
+      "event": "本季平稳收官。你整理备份、更新依赖、记录收支，然后合上电脑。",
+      "grade": 0,
+      "effect": {
+        "MNY": 2,
+        "STR": 1
+      }
+    },
+    {
+      "id": 20004,
+      "event": "入职满一年，你参加了第一次年度评审。",
+      "grade": 0,
+      "branch": [
+        {
+          "condition": "INT>=10",
+          "event": 20804
+        },
+        {
+          "condition": "AGE>=0",
+          "event": 20805
+        }
+      ]
+    },
+    {
+      "id": 20804,
+      "event": "可靠的交付让你拿到晋升。新头衔带来更多责任，也带来了一点踏实的底气。",
+      "grade": 1,
+      "effect": {
+        "MNY": 2,
+        "SPR": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20805,
+      "event": "评审反馈很具体：继续练好基本功。你选出一个需要补齐的方向，重新出发。",
+      "grade": 0,
+      "effect": {
+        "INT": 2,
+        "SPR": 1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20012,
+      "event": "工作三年，技术负责人邀请你聊聊接下来的发展方向。",
+      "grade": 0,
+      "dialogue": {
+        "title": "你想走哪条职业路线？",
+        "speaker": "周总",
+        "role": "技术负责人",
+        "portrait": "周",
+        "text": "你已经能独立交付了。接下来，可以深耕技术、试着带团队，也可以先保持现在的节奏。你更想要哪一种？"
+      },
+      "choices": [
+        {
+          "id": "technical",
+          "label": "深耕技术，争取负责核心模块",
+          "description": "走技术路线，这段经历会帮助你争取技术专家结局。",
+          "condition": "INT>=12",
+          "lockedReason": "需要技术达到 12",
+          "event": 20812
+        },
+        {
+          "id": "lead",
+          "label": "试着带团队，让协作产生更大价值",
+          "description": "走管理路线，未来会更看重团队协作与沟通积累。",
+          "condition": "CHR>=9",
+          "lockedReason": "需要沟通达到 9",
+          "event": 20813
+        },
+        {
+          "id": "steady",
+          "label": "先把工程能力做扎实，不急着定方向",
+          "description": "保留探索空间，也照顾好自己的状态。",
+          "event": 20814
+        }
+      ]
+    },
+    {
+      "id": 20812,
+      "event": "你承担了核心模块的设计工作。技术路线渐渐清晰：把难题理解得更深一点。",
+      "grade": 2,
+      "effect": {
+        "INT": 2,
+        "MNY": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20813,
+      "event": "你开始协调一个小团队。写代码之外，还要理解人、目标和交付之间的关系。",
+      "grade": 2,
+      "effect": {
+        "CHR": 2,
+        "MNY": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20814,
+      "event": "你选择先稳住节奏。比起跟着别人赶路，你想把手里的工作做扎实。",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "STR": 1,
+        "SPR": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20024,
+      "event": "工作六年，你和一位老同事聊起职业与生活。",
+      "grade": 0,
+      "dialogue": {
+        "title": "六年之后，为谁安排时间？",
+        "speaker": "阿远",
+        "role": "老同事",
+        "portrait": "远",
+        "text": "你有经验了，也比刚入行时更知道自己要什么。继续在团队里成长，尝试独立开发，还是把生活放在更前面？"
+      },
+      "choices": [
+        {
+          "id": "independent",
+          "label": "拿出一部分储备，试试独立开发",
+          "description": "开启独立路线。未来可接长期项目，也会影响自由开发者结局。",
+          "condition": "(MNY>=12)&(INT>=14)",
+          "lockedReason": "需要积蓄 12、技术 14",
+          "event": 20827
+        },
+        {
+          "id": "balance",
+          "label": "收紧工作边界，认真经营生活",
+          "description": "以可持续为目标，争取生活架构师结局。",
+          "event": 20825
+        },
+        {
+          "id": "continue",
+          "label": "留在团队，继续争取有价值的项目",
+          "description": "继续先前的技术或团队路线，保留熟悉环境里的成长空间。",
+          "event": 20824
+        }
+      ]
+    },
+    {
+      "id": 20824,
+      "event": "你决定继续在团队里深耕。经验、熟悉的伙伴和稳定交付，让这条路线值得再走一段。",
+      "grade": 2,
+      "effect": {
+        "INT": 2,
+        "MNY": 2,
+        "SPR": 1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20825,
+      "event": "你找到了适合自己的节奏。稳定的作息和好奇心，让写代码变得可持续。",
+      "grade": 2,
+      "effect": {
+        "STR": 1,
+        "SPR": 2
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20826,
+      "event": "有些目标达到了，有些还没有。你决定减少无效比较，把精力放回可改变的事情。",
+      "grade": 0,
+      "effect": {
+        "SPR": 2,
+        "STR": 1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20036,
+      "event": "九年过去，你翻看最早的提交记录。当初的新人，已经走出了自己的职业路线。",
+      "grade": 0,
+      "branch": [
+        {
+          "condition": "(STR<=0)|(SPR<=0)",
+          "event": 20906
+        },
+        {
+          "condition": "(EVT?[20827])&(MNY>=16)",
+          "event": 20903
+        },
+        {
+          "condition": "(EVT?[20825])&(STR>=10)&(SPR>=12)",
+          "event": 20904
+        },
+        {
+          "condition": "(EVT?[20813])&(CHR>=22)",
+          "event": 20902
+        },
+        {
+          "condition": "(EVT?[20812])&(INT>=26)",
+          "event": 20901
+        },
+        {
+          "condition": "INT>=30",
+          "event": 20901
+        },
+        {
+          "condition": "CHR>=26",
+          "event": 20902
+        },
+        {
+          "condition": "MNY>=26",
+          "event": 20903
+        },
+        {
+          "condition": "(STR>=10)&(SPR>=12)",
+          "event": 20904
+        },
+        {
+          "condition": "AGE>=0",
+          "event": 20905
+        }
+      ]
+    },
+    {
+      "id": 20901,
+      "event": "技术专家：你把复杂问题拆成清晰的系统，也成为了同事愿意请教的人。",
+      "grade": 2,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20902,
+      "event": "团队领航员：从写好自己的代码，到让一群人把事情做好。你的下一行代码，是团队。",
+      "grade": 2,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20903,
+      "event": "自由开发者：积累的作品与储备给了你选择权。你开始按自己的节奏接项目、做产品。",
+      "grade": 2,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20904,
+      "event": "生活架构师：你交付了工作，也认真经营了生活。健康、爱好和代码，都有自己的位置。",
+      "grade": 2,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20905,
+      "event": "可靠的工程师：没有传说中的一夜成名，只有一次次值得信任的交付。这也是很好的职业答案。",
+      "grade": 2,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20906,
+      "event": "暂停，是为了重启：你决定离开高压环境，先照顾好自己。职业生涯可以暂停，人生还有其他分支。",
+      "grade": 0,
+      "effect": {
+        "LIF": -1
+      },
+      "NoRandom": true
+    },
+    {
+      "id": 20700,
+      "event": "持续的透支已经影响到日常生活。你提交了休整申请，把恢复健康放在下一份工作之前。",
+      "grade": 0,
+      "include": "(STR<=0)|(SPR<=0)",
+      "branch": [
+        {
+          "condition": "AGE>=0",
+          "event": 20906
+        }
+      ]
+    },
+    {
+      "id": 21001,
+      "event": "你逐条回复了评审意见，并补齐边界测试。林工认真看完后点了 Merge。",
+      "effect": {
+        "INT": 2,
+        "SPR": 1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21002,
+      "event": "你们在白板前讨论了二十分钟，找到了更清晰的实现。第一次协作就此建立。",
+      "effect": {
+        "CHR": 2,
+        "INT": 1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21003,
+      "event": "你带着待办注释合并了代码。进度暂时保住了，技术债也留在了仓库里。",
+      "effect": {
+        "MNY": 2,
+        "SPR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21004,
+      "event": "你选了一本基础书，边读边做小实验。知识开始从会用变成真正理解。",
+      "effect": {
+        "INT": 3,
+        "MNY": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21005,
+      "event": "你和小周约定每周一起做点东西。有时卡住，换个人解释就豁然开朗。",
+      "effect": {
+        "INT": 1,
+        "CHR": 2
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21006,
+      "event": "你把晚上的时间还给运动和睡眠。第二天醒来，脑子意外地清楚。",
+      "effect": {
+        "STR": 2,
+        "SPR": 2
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 20003,
+      "event": "熟悉工作以后，下班时间终于有了一点余地。你和搭档聊起下一步的安排。",
+      "grade": 0,
+      "dialogue": {
+        "title": "下班后的两个小时",
+        "speaker": "小周",
+        "role": "同组搭档",
+        "portrait": "周",
+        "text": "最近总算没那么忙了。今晚你准备继续学点东西，还是给自己放个假？"
+      },
+      "choices": [
+        {
+          "id": "study",
+          "label": "买一本技术书，认真做完练习",
+          "description": "投入一点积蓄，积累可迁移的技术能力。",
+          "event": 21004
+        },
+        {
+          "id": "pair",
+          "label": "约同事交流，一起做个小项目",
+          "description": "在协作中学习，也把想法讲给别人听。",
+          "event": 21005
+        },
+        {
+          "id": "rest",
+          "label": "关掉电脑，先把作息调整好",
+          "description": "恢复精力，让这份工作能够做得长久。",
+          "event": 21006
+        }
+      ]
+    },
+    {
+      "id": 21007,
+      "event": "你锁定了并发问题，连夜修复并补上监控。业务恢复了，你也错过了整晚的休息。",
+      "effect": {
+        "INT": 3,
+        "MNY": 2,
+        "STR": -2,
+        "SPR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21008,
+      "event": "你组织排查与回滚分工，和同事一起恢复了服务。复盘里，清晰的沟通得到认可。",
+      "effect": {
+        "CHR": 2,
+        "INT": 1,
+        "STR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21009,
+      "event": "你们按应急预案完成回滚。周一再复盘根因，今晚没有人需要硬扛。",
+      "effect": {
+        "STR": 1,
+        "SPR": 2
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 20006,
+      "event": "周五晚饭刚端上桌，生产告警响了。群里发来一张持续上升的错误率曲线。",
+      "grade": 0,
+      "dialogue": {
+        "title": "周五晚上的生产告警",
+        "speaker": "阿岑",
+        "role": "值班负责人",
+        "portrait": "岑",
+        "text": "我们需要尽快止损。你熟悉这个模块，是独立排查、拉人协作，还是先走回滚流程？"
+      },
+      "choices": [
+        {
+          "id": "hotfix",
+          "label": "接手排查，连夜修复根因",
+          "description": "用技术争取一次关键表现，也承担健康与心态的代价。",
+          "condition": "INT>=9",
+          "lockedReason": "技术达到 9，才能独立处理",
+          "event": 21007
+        },
+        {
+          "id": "coordinate",
+          "label": "拉上值班同事，分工处理",
+          "description": "主动求援，用协作降低事故的影响。",
+          "event": 21008
+        },
+        {
+          "id": "rollback",
+          "label": "按预案回滚，把排查留到明天",
+          "description": "优先恢复服务，给团队保留休息和复盘的空间。",
+          "event": 21009
+        }
+      ]
+    },
+    {
+      "id": 21010,
+      "event": "你顺利通过面试，加入了新的团队。待遇提高了，适应期也比想象中更忙。",
+      "effect": {
+        "MNY": 4,
+        "INT": 1,
+        "STR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21011,
+      "event": "你婉拒了邀请，选择完成眼前的项目。导师开始让你参与更深的设计讨论。",
+      "effect": {
+        "INT": 2,
+        "CHR": 1,
+        "SPR": 1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21012,
+      "event": "你用交付成果和明确诉求谈成了调整。涨幅没有新机会那么高，但节奏更适合自己。",
+      "effect": {
+        "MNY": 3,
+        "CHR": 1,
+        "SPR": 1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 20010,
+      "event": "一份新的工作机会摆到面前。待遇更好，技术栈也更陌生。",
+      "grade": 0,
+      "dialogue": {
+        "title": "一封来自新团队的邀请",
+        "speaker": "陈顾问",
+        "role": "招聘顾问",
+        "portrait": "陈",
+        "text": "新岗位愿意给你更高的待遇，但也意味着重新适应团队。你想争取一下，还是先留在现在的项目？"
+      },
+      "choices": [
+        {
+          "id": "jump",
+          "label": "接受挑战，准备跳槽",
+          "description": "用已经积累的技术和表达能力，换一个新的环境。",
+          "condition": "(INT>=12)&(CHR>=8)",
+          "lockedReason": "需要技术 12、沟通 8",
+          "event": 21010
+        },
+        {
+          "id": "stay",
+          "label": "留下来，把当前项目做深",
+          "description": "继续积累，完成一个真正熟悉的系统。",
+          "event": 21011
+        },
+        {
+          "id": "negotiate",
+          "label": "先和主管沟通职责与待遇",
+          "description": "主动表达诉求，为现有岗位争取更合适的安排。",
+          "condition": "CHR>=10",
+          "lockedReason": "需要沟通达到 10",
+          "event": 21012
+        }
+      ]
+    },
+    {
+      "id": 21016,
+      "event": "你成为项目的协作维护者，开始认真处理 issue、评审补丁。作品也渐渐有了自己的声音。",
+      "effect": {
+        "INT": 3,
+        "CHR": 1,
+        "MNY": -2
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21017,
+      "event": "你把已有成果整理成晋升材料，并开始主持跨组协作。责任更大，会议也更多了。",
+      "effect": {
+        "CHR": 3,
+        "MNY": 1,
+        "STR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21018,
+      "event": "你认真拒绝了额外安排，用掉积攒的年假。回来时，对下一步反而更清楚了。",
+      "effect": {
+        "STR": 3,
+        "SPR": 3,
+        "MNY": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 20018,
+      "event": "你关注的开源项目发来邀请。同一周，团队也在筹备下一次晋升评审。",
+      "grade": 0,
+      "dialogue": {
+        "title": "工作之外的分支",
+        "speaker": "阿遥",
+        "role": "开源维护者",
+        "portrait": "遥",
+        "text": "之前的贡献很扎实。我们正好缺一位长期维护者，但它需要持续投入。你愿意试试吗？"
+      },
+      "choices": [
+        {
+          "id": "opensource",
+          "label": "加入维护，把时间投给开源",
+          "description": "投入储备与精力，换取更深的技术积累和社区连接。",
+          "event": 21016
+        },
+        {
+          "id": "promotion",
+          "label": "暂缓邀请，先准备内部晋升",
+          "description": "把精力投入工作成果、职责和团队影响力。",
+          "event": 21017
+        },
+        {
+          "id": "recover",
+          "label": "两边都先放慢，给自己留一个假期",
+          "description": "机会还会有，恢复状态也是长期投入。",
+          "event": 21018
+        }
+      ]
+    },
+    {
+      "id": 20827,
+      "event": "你拿出一部分备用金，为独立产品留出试验期。工作开始围绕自己的作品和客户展开。",
+      "effect": {
+        "MNY": -4,
+        "INT": 1,
+        "SPR": 3
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21022,
+      "event": "你完成了长期想做的技术改进，并把设计取舍认真写进了文档。",
+      "effect": {
+        "INT": 3,
+        "STR": -1,
+        "SPR": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21023,
+      "event": "你花时间带新人、补文档。某天你休假时，团队自己处理好了一个棘手的问题。",
+      "effect": {
+        "CHR": 3,
+        "SPR": 1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21024,
+      "event": "你把一次性交付变成长期维护服务，客户愿意为稳定与信任继续续约。",
+      "effect": {
+        "MNY": 3,
+        "SPR": 2
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 21025,
+      "event": "你准时合上电脑，把一个平常的周末过得很认真。生活没有等待你完成所有待办。",
+      "effect": {
+        "STR": 2,
+        "SPR": 3,
+        "MNY": -1
+      },
+      "grade": 1,
+      "NoRandom": true
+    },
+    {
+      "id": 20030,
+      "event": "九年旅程逐渐进入尾声。你给自己留出一个下午，重新选择精力的去向。",
+      "grade": 0,
+      "dialogue": {
+        "title": "下一段路，想留下什么？",
+        "speaker": "未来的你",
+        "role": "写给自己的便笺",
+        "portrait": "你",
+        "text": "过去已经积累了很多。最后这段时间，你想留下一个扎实的系统、一支更好的团队，还是一点从容生活的余地？"
+      },
+      "choices": [
+        {
+          "id": "specialize",
+          "label": "钻研一个难题，完成技术积累",
+          "description": "再深入一点，也接受这一季的精力消耗。",
+          "condition": "INT>=18",
+          "lockedReason": "需要技术达到 18",
+          "event": 21022
+        },
+        {
+          "id": "mentor",
+          "label": "把经验交给新人，让团队自己成长",
+          "description": "把个人经验变成团队能够继续使用的方法。",
+          "event": 21023
+        },
+        {
+          "id": "clients",
+          "label": "经营长期客户，稳住独立业务",
+          "description": "为已经选择的独立路线建立更可靠的收入来源。",
+          "condition": "EVT?[20827]",
+          "lockedReason": "需要先选择独立开发路线",
+          "event": 21024
+        },
+        {
+          "id": "life",
+          "label": "减少额外安排，把时间留给生活",
+          "description": "成长也包括知道什么时候可以停下来。",
+          "event": 21025
+        }
+      ]
+    },
+    {
+      "id": 20213,
+      "event": "当初赶着合并的边界遗漏在联调中暴露。你花时间补齐测试，给技术债做了一个真正的收尾。",
+      "grade": 0,
+      "include": "EVT?[21003]",
+      "exclude": "EVT?[20213]",
+      "effect": {
+        "INT": 1,
+        "STR": -1,
+        "SPR": -1
+      }
+    },
+    {
+      "id": 20214,
+      "event": "之前补上的边界测试拦住了一次回归。评审时多花的时间，今天替团队省了下来。",
+      "grade": 1,
+      "include": "EVT?[21001]",
+      "exclude": "EVT?[20214]",
+      "effect": {
+        "INT": 1,
+        "SPR": 2
+      }
+    }
+  ],
+  "talents": [
+    {
+      "id": 1001,
+      "name": "键盘肌肉记忆",
+      "description": "入职时技术 +2",
+      "grade": 0,
+      "effect": {
+        "INT": 2
+      },
+      "max": 1
+    },
+    {
+      "id": 1002,
+      "name": "会写 README",
+      "description": "入职时沟通 +2",
+      "grade": 0,
+      "effect": {
+        "CHR": 2
+      },
+      "max": 1
+    },
+    {
+      "id": 1003,
+      "name": "早睡选手",
+      "description": "入职时健康 +3；与夜猫子互斥",
+      "grade": 0,
+      "effect": {
+        "STR": 3
+      },
+      "exclude": [
+        1004
+      ],
+      "max": 1
+    },
+    {
+      "id": 1004,
+      "name": "夜猫子",
+      "description": "技术 +3、健康 -1；与早睡选手互斥",
+      "grade": 0,
+      "effect": {
+        "INT": 3,
+        "STR": -1
+      },
+      "max": 1
+    },
+    {
+      "id": 1005,
+      "name": "带饭上班",
+      "description": "入职时积蓄 +2",
+      "grade": 0,
+      "effect": {
+        "MNY": 2
+      },
+      "max": 1
+    },
+    {
+      "id": 1006,
+      "name": "橡皮鸭调试",
+      "description": "第 2、3、4 季度各获得技术 +1",
+      "grade": 0,
+      "condition": "AGE>=2",
+      "effect": {
+        "INT": 1
+      },
+      "max": 3
+    },
+    {
+      "id": 1007,
+      "name": "科班底子",
+      "description": "初始可分配点数 +2",
+      "grade": 0,
+      "points": 2,
+      "max": 1
+    },
+    {
+      "id": 1008,
+      "name": "钝感力",
+      "description": "入职时心态 +3",
+      "grade": 0,
+      "effect": {
+        "SPR": 3
+      },
+      "max": 1
+    },
+    {
+      "id": 1009,
+      "name": "散步搭子",
+      "description": "第 5、6、7 季度各获得健康 +1",
+      "grade": 0,
+      "condition": "AGE>=5",
+      "effect": {
+        "STR": 1
+      },
+      "max": 3
+    },
+    {
+      "id": 1010,
+      "name": "搜索工程师",
+      "description": "入职时技术 +1、沟通 +1",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "CHR": 1
+      },
+      "max": 1
+    },
+    {
+      "id": 1011,
+      "name": "有点存款",
+      "description": "入职时积蓄 +3、心态 +1",
+      "grade": 0,
+      "effect": {
+        "MNY": 3,
+        "SPR": 1
+      },
+      "max": 1
+    },
+    {
+      "id": 1012,
+      "name": "爱写笔记",
+      "description": "第 5、6 季度各获得技术 +1",
+      "grade": 0,
+      "condition": "AGE>=5",
+      "effect": {
+        "INT": 1
+      },
+      "max": 2
+    },
+    {
+      "id": 1013,
+      "name": "周末断联",
+      "description": "第 9、10 季度各获得心态 +1",
+      "grade": 0,
+      "condition": "AGE>=9",
+      "effect": {
+        "SPR": 1
+      },
+      "max": 2
+    },
+    {
+      "id": 1014,
+      "name": "冷静回滚",
+      "description": "入职时技术 +1、心态 +2",
+      "grade": 0,
+      "effect": {
+        "INT": 1,
+        "SPR": 2
+      },
+      "max": 1
+    },
+    {
+      "id": 1015,
+      "name": "会议翻译官",
+      "description": "入职时沟通 +3",
+      "grade": 1,
+      "effect": {
+        "CHR": 3
+      },
+      "max": 1
+    },
+    {
+      "id": 1016,
+      "name": "自动化信徒",
+      "description": "第 5、6、7 季度各获得技术 +2",
+      "grade": 1,
+      "condition": "AGE>=5",
+      "effect": {
+        "INT": 2
+      },
+      "max": 3
+    },
+    {
+      "id": 1017,
+      "name": "长期主义",
+      "description": "第 13、14、15 季度各获得积蓄 +2",
+      "grade": 1,
+      "condition": "AGE>=13",
+      "effect": {
+        "MNY": 2
+      },
+      "max": 3
+    },
+    {
+      "id": 1018,
+      "name": "边界感",
+      "description": "入职时健康 +2、心态 +3",
+      "grade": 1,
+      "effect": {
+        "STR": 2,
+        "SPR": 3
+      },
+      "max": 1
+    },
+    {
+      "id": 1019,
+      "name": "转行的决心",
+      "description": "初始可分配点数 +4",
+      "grade": 1,
+      "points": 4,
+      "max": 1
+    },
+    {
+      "id": 1020,
+      "name": "开源雷达",
+      "description": "入职时技术 +3、沟通 +1",
+      "grade": 1,
+      "effect": {
+        "INT": 3,
+        "CHR": 1
+      },
+      "max": 1
+    },
+    {
+      "id": 1021,
+      "name": "谈薪高手",
+      "description": "入职时沟通 +2、积蓄 +3",
+      "grade": 1,
+      "effect": {
+        "CHR": 2,
+        "MNY": 3
+      },
+      "max": 1
+    },
+    {
+      "id": 1022,
+      "name": "运动习惯",
+      "description": "第 9 至 12 季度各获得健康 +1",
+      "grade": 1,
+      "condition": "AGE>=9",
+      "effect": {
+        "STR": 1
+      },
+      "max": 4
+    },
+    {
+      "id": 1023,
+      "name": "系统思维",
+      "description": "入职时技术 +5、沟通 +2",
+      "grade": 2,
+      "effect": {
+        "INT": 5,
+        "CHR": 2
+      },
+      "max": 1
+    },
+    {
+      "id": 1024,
+      "name": "情绪防火墙",
+      "description": "入职时健康 +3、心态 +5",
+      "grade": 2,
+      "effect": {
+        "STR": 3,
+        "SPR": 5
+      },
+      "max": 1
+    },
+    {
+      "id": 1025,
+      "name": "复利人生",
+      "description": "第 17 至 20 季度各获得积蓄 +3",
+      "grade": 2,
+      "condition": "AGE>=17",
+      "effect": {
+        "MNY": 3
+      },
+      "max": 4
+    },
+    {
+      "id": 1026,
+      "name": "技术布道者",
+      "description": "入职时技术 +3、沟通 +4",
+      "grade": 2,
+      "effect": {
+        "INT": 3,
+        "CHR": 4
+      },
+      "max": 1
+    },
+    {
+      "id": 1027,
+      "name": "十倍效率",
+      "description": "入职时技术 +7、健康 +3",
+      "grade": 3,
+      "effect": {
+        "INT": 7,
+        "STR": 3
+      },
+      "max": 1
+    },
+    {
+      "id": 1028,
+      "name": "人生合伙人",
+      "description": "沟通、积蓄、健康、心态各 +3",
+      "grade": 3,
+      "effect": {
+        "CHR": 3,
+        "MNY": 3,
+        "STR": 3,
+        "SPR": 3
+      },
+      "max": 1
+    }
+  ],
+  "achievements": [
+    {
+      "id": 301,
+      "name": "Hello, World!",
+      "description": "开始第一段程序员生涯",
+      "condition": "TMS>=0",
+      "opportunity": "START",
+      "grade": 0,
+      "hide": false
+    },
+    {
+      "id": 302,
+      "name": "第一次合并",
+      "description": "完成第一个 Pull Request",
+      "condition": "EVT?[21001,21002,21003]",
+      "opportunity": "TRAJECTORY",
+      "grade": 0,
+      "hide": false
+    },
+    {
+      "id": 303,
+      "name": "转正成功",
+      "description": "通过试用期",
+      "condition": "EVT?[20801,20802,20803]",
+      "opportunity": "TRAJECTORY",
+      "grade": 0,
+      "hide": false
+    },
+    {
+      "id": 304,
+      "name": "一年一提交",
+      "description": "完成第一年的职业历程",
+      "condition": "AGE>=4",
+      "opportunity": "TRAJECTORY",
+      "grade": 0,
+      "hide": false
+    },
+    {
+      "id": 305,
+      "name": "开源的回声",
+      "description": "让一次开源贡献被合并",
+      "condition": "EVT?[20208]",
+      "opportunity": "TRAJECTORY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 306,
+      "name": "第一位用户",
+      "description": "独立产品收到第一笔付款",
+      "condition": "EVT?[20309]",
+      "opportunity": "TRAJECTORY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 307,
+      "name": "深入一层",
+      "description": "进入核心技术路线",
+      "condition": "EVT?[20812]",
+      "opportunity": "TRAJECTORY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 308,
+      "name": "从我到我们",
+      "description": "开始协调团队",
+      "condition": "EVT?[20813]",
+      "opportunity": "TRAJECTORY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 309,
+      "name": "可持续运行",
+      "description": "工作六年时仍有健康与好心态",
+      "condition": "EVT?[20825]",
+      "opportunity": "TRAJECTORY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 310,
+      "name": "有备无患",
+      "description": "积蓄达到 24 点",
+      "condition": "MNY>=24",
+      "opportunity": "TRAJECTORY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 311,
+      "name": "技术专家",
+      "description": "达成技术专家结局",
+      "condition": "EVT?[20901]",
+      "opportunity": "SUMMARY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 312,
+      "name": "团队领航员",
+      "description": "达成团队领航员结局",
+      "condition": "EVT?[20902]",
+      "opportunity": "SUMMARY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 313,
+      "name": "自由开发者",
+      "description": "达成自由开发者结局",
+      "condition": "EVT?[20903]",
+      "opportunity": "SUMMARY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 314,
+      "name": "生活架构师",
+      "description": "达成生活架构师结局",
+      "condition": "EVT?[20904]",
+      "opportunity": "SUMMARY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 315,
+      "name": "可靠的工程师",
+      "description": "达成可靠的工程师结局",
+      "condition": "EVT?[20905]",
+      "opportunity": "SUMMARY",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 316,
+      "name": "允许自己暂停",
+      "description": "离开高压环境，开启休整",
+      "condition": "EVT?[20906]",
+      "opportunity": "SUMMARY",
+      "grade": 0,
+      "hide": false
+    },
+    {
+      "id": 317,
+      "name": "九年迭代",
+      "description": "完成 36 个季度的职业历程",
+      "condition": "AGE>=36",
+      "opportunity": "SUMMARY",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 318,
+      "name": "重新 checkout",
+      "description": "完成五次职涯重启",
+      "condition": "TMS>=4",
+      "opportunity": "END",
+      "grade": 1,
+      "hide": false
+    },
+    {
+      "id": 319,
+      "name": "阅历仓库",
+      "description": "完成十次职涯重启",
+      "condition": "TMS>=9",
+      "opportunity": "END",
+      "grade": 2,
+      "hide": false
+    },
+    {
+      "id": 320,
+      "name": "全栈人生",
+      "description": "技术、沟通、健康、心态均达到 15",
+      "condition": "(INT>=15)&(CHR>=15)&(STR>=15)&(SPR>=15)",
+      "opportunity": "SUMMARY",
+      "grade": 3,
+      "hide": true
+    }
+  ],
+  "characters": [
+    {
+      "id": 1,
+      "name": "科班应届生",
+      "property": {
+        "INT": 8,
+        "CHR": 4,
+        "STR": 6,
+        "MNY": 2
+      },
+      "talent": [
+        1007,
+        1012,
+        1008
+      ]
+    },
+    {
+      "id": 2,
+      "name": "自学转行者",
+      "property": {
+        "INT": 6,
+        "CHR": 6,
+        "STR": 5,
+        "MNY": 3
+      },
+      "talent": [
+        1019,
+        1010,
+        1013
+      ]
+    },
+    {
+      "id": 3,
+      "name": "开源爱好者",
+      "property": {
+        "INT": 9,
+        "CHR": 4,
+        "STR": 4,
+        "MNY": 3
+      },
+      "talent": [
+        1020,
+        1006,
+        1002
+      ]
+    },
+    {
+      "id": 4,
+      "name": "协作型选手",
+      "property": {
+        "INT": 5,
+        "CHR": 9,
+        "STR": 4,
+        "MNY": 2
+      },
+      "talent": [
+        1015,
+        1008,
+        1009
+      ]
+    },
+    {
+      "id": 5,
+      "name": "生活平衡派",
+      "property": {
+        "INT": 5,
+        "CHR": 4,
+        "STR": 8,
+        "MNY": 3
+      },
+      "talent": [
+        1018,
+        1022,
+        1013
+      ]
+    },
+    {
+      "id": 6,
+      "name": "独立产品人",
+      "property": {
+        "INT": 7,
+        "CHR": 5,
+        "STR": 3,
+        "MNY": 5
+      },
+      "talent": [
+        1021,
+        1011,
+        1017
+      ]
+    }
+  ],
+  "ages": [
+    {
+      "age": 0,
+      "event": [
+        [
+          [
+            20000,
+            1
+          ]
+        ],
+        []
+      ]
+    },
+    {
+      "age": 1,
+      "event": [
+        [
+          [
+            20001,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 2,
+      "event": [
+        [
+          [
+            20002,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 3,
+      "event": [
+        [
+          [
+            20003,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 4,
+      "event": [
+        [
+          [
+            20004,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 5,
+      "event": [
+        [
+          [
+            20201,
+            1
+          ],
+          [
+            20202,
+            1
+          ],
+          [
+            20203,
+            1
+          ],
+          [
+            20204,
+            1
+          ],
+          [
+            20205,
+            1
+          ],
+          [
+            20206,
+            1
+          ],
+          [
+            20207,
+            1
+          ],
+          [
+            20208,
+            1
+          ],
+          [
+            20209,
+            1
+          ],
+          [
+            20210,
+            1
+          ],
+          [
+            20211,
+            1
+          ],
+          [
+            20212,
+            1
+          ],
+          [
+            20213,
+            1
+          ],
+          [
+            20214,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 6,
+      "event": [
+        [
+          [
+            20006,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 7,
+      "event": [
+        [
+          [
+            20201,
+            1
+          ],
+          [
+            20202,
+            1
+          ],
+          [
+            20203,
+            1
+          ],
+          [
+            20204,
+            1
+          ],
+          [
+            20205,
+            1
+          ],
+          [
+            20206,
+            1
+          ],
+          [
+            20207,
+            1
+          ],
+          [
+            20208,
+            1
+          ],
+          [
+            20209,
+            1
+          ],
+          [
+            20210,
+            1
+          ],
+          [
+            20211,
+            1
+          ],
+          [
+            20212,
+            1
+          ],
+          [
+            20213,
+            1
+          ],
+          [
+            20214,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 8,
+      "event": [
+        [
+          [
+            20201,
+            1
+          ],
+          [
+            20202,
+            1
+          ],
+          [
+            20203,
+            1
+          ],
+          [
+            20204,
+            1
+          ],
+          [
+            20205,
+            1
+          ],
+          [
+            20206,
+            1
+          ],
+          [
+            20207,
+            1
+          ],
+          [
+            20208,
+            1
+          ],
+          [
+            20209,
+            1
+          ],
+          [
+            20210,
+            1
+          ],
+          [
+            20211,
+            1
+          ],
+          [
+            20212,
+            1
+          ],
+          [
+            20213,
+            1
+          ],
+          [
+            20214,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 9,
+      "event": [
+        [
+          [
+            20201,
+            1
+          ],
+          [
+            20202,
+            1
+          ],
+          [
+            20203,
+            1
+          ],
+          [
+            20204,
+            1
+          ],
+          [
+            20205,
+            1
+          ],
+          [
+            20206,
+            1
+          ],
+          [
+            20207,
+            1
+          ],
+          [
+            20208,
+            1
+          ],
+          [
+            20209,
+            1
+          ],
+          [
+            20210,
+            1
+          ],
+          [
+            20211,
+            1
+          ],
+          [
+            20212,
+            1
+          ],
+          [
+            20213,
+            1
+          ],
+          [
+            20214,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 10,
+      "event": [
+        [
+          [
+            20010,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 11,
+      "event": [
+        [
+          [
+            20201,
+            1
+          ],
+          [
+            20202,
+            1
+          ],
+          [
+            20203,
+            1
+          ],
+          [
+            20204,
+            1
+          ],
+          [
+            20205,
+            1
+          ],
+          [
+            20206,
+            1
+          ],
+          [
+            20207,
+            1
+          ],
+          [
+            20208,
+            1
+          ],
+          [
+            20209,
+            1
+          ],
+          [
+            20210,
+            1
+          ],
+          [
+            20211,
+            1
+          ],
+          [
+            20212,
+            1
+          ],
+          [
+            20213,
+            1
+          ],
+          [
+            20214,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 12,
+      "event": [
+        [
+          [
+            20012,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 13,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 14,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 15,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 16,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 17,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 18,
+      "event": [
+        [
+          [
+            20018,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 19,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 20,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 21,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 22,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 23,
+      "event": [
+        [
+          [
+            20301,
+            1
+          ],
+          [
+            20302,
+            1
+          ],
+          [
+            20303,
+            1
+          ],
+          [
+            20304,
+            1
+          ],
+          [
+            20305,
+            1
+          ],
+          [
+            20306,
+            1
+          ],
+          [
+            20307,
+            1
+          ],
+          [
+            20308,
+            1
+          ],
+          [
+            20309,
+            1
+          ],
+          [
+            20310,
+            1
+          ],
+          [
+            20311,
+            1
+          ],
+          [
+            20312,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 24,
+      "event": [
+        [
+          [
+            20024,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 25,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 26,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 27,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 28,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 29,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 30,
+      "event": [
+        [
+          [
+            20030,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 31,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 32,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 33,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 34,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 35,
+      "event": [
+        [
+          [
+            20401,
+            1
+          ],
+          [
+            20402,
+            1
+          ],
+          [
+            20403,
+            1
+          ],
+          [
+            20404,
+            1
+          ],
+          [
+            20405,
+            1
+          ],
+          [
+            20406,
+            1
+          ],
+          [
+            20407,
+            1
+          ],
+          [
+            20408,
+            1
+          ],
+          [
+            20409,
+            1
+          ],
+          [
+            20410,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    },
+    {
+      "age": 36,
+      "event": [
+        [
+          [
+            20036,
+            1
+          ]
+        ],
+        [
+          [
+            20700,
+            1
+          ]
+        ]
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "event": 20901,
+      "name": "技术专家",
+      "description": "你把复杂问题拆成清晰的系统，也成为了同事愿意请教的人。"
+    },
+    {
+      "event": 20902,
+      "name": "团队领航员",
+      "description": "从写好自己的代码，到让一群人把事情做好。你的下一行代码，是团队。"
+    },
+    {
+      "event": 20903,
+      "name": "自由开发者",
+      "description": "积累的作品与储备给了你选择权。你开始按自己的节奏接项目、做产品。"
+    },
+    {
+      "event": 20904,
+      "name": "生活架构师",
+      "description": "你交付了工作，也认真经营了生活。健康、爱好和代码，都有自己的位置。"
+    },
+    {
+      "event": 20905,
+      "name": "可靠的工程师",
+      "description": "没有传说中的一夜成名，只有一次次值得信任的交付。这也是很好的职业答案。"
+    },
+    {
+      "event": 20906,
+      "name": "暂停，是为了重启",
+      "description": "你决定离开高压环境，先照顾好自己。职业生涯可以暂停，人生还有其他分支。"
+    }
+  ],
+  "specialThanks": [
+    {
+      "group": 1,
+      "name": "Vick Scarlet 与上游贡献者",
+      "comment": "基于开源项目 remake 改编，保留 MIT 许可与原作者署名。"
+    },
+    {
+      "group": 2,
+      "name": "每一个认真生活的开发者",
+      "comment": "愿你的提交有人理解，付出有所回响，下班也有自己的生活。"
+    }
+  ]
+}
