@@ -29,7 +29,7 @@
         "ink": "^8.0.0",
         "ink-scroll-view": "^0.4.0",
         "jotai": "^3.0.1",
-        "react": "^19.3.0",
+        "react": "^19.3.1",
         "react-devtools-core": "^8.0.0"
     },
     "files": [

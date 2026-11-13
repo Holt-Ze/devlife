@@ -18,7 +18,7 @@
         "@remake/thirdparty-bili-toy": "workspace:*",
         "@remake/vitex": "workspace:*",
         "jotai": "^3.0.1",
-        "react": "^19.3.0",
+        "react": "^19.3.1",
         "react-dom": "^19.3.0",
         "react-hot-toast": "^2.6.1"
     },
