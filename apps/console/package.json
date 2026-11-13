@@ -24,7 +24,7 @@
         "@remake/data": "workspace:*",
         "@remake/hooks": "workspace:*",
         "@remake/vitex": "workspace:*",
-        "@types/node": "^26.6.4",
+        "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "ink": "^8.0.0",
         "ink-scroll-view": "^0.4.0",
