@@ -7,7 +7,7 @@ import { createApp } from '../server.mjs'
 export async function exercise(db, t) {
     const { data } = await source36()
     let player, service, version
-    await t.test('three ordered migrations create 18 business tables with comments', async () => {
+    await t.test('ordered migrations create 18 business tables with track-scoped pools', async () => {
         await db.migrate.latest()
         const rows = await db('information_schema.tables').where({ table_schema: 'public', table_type: 'BASE TABLE' }).whereNot('table_name', 'like', 'knex_%')
         assert.equal(rows.length, 18)
@@ -19,13 +19,18 @@ export async function exercise(db, t) {
         process.env.SEED_PLAYER_PASSWORD = randomUUID()
         await db.seed.run()
         const report = await verifySource(db)
-        assert.equal(report.counts.events, 98)
-        assert.equal(report.counts.event_choices, 25)
+        assert.equal(report.counts.events, data.events.length)
+        assert.equal(report.counts.event_choices, data.events.reduce((n, event) => n + (event.choices?.length || 0), 0))
         assert.equal(report.counts.talents, 28)
-        assert.equal(report.counts.achievements, 20)
+        assert.equal(report.counts.achievements, data.achievements.length)
         assert.equal(report.counts.characters, 6)
-        assert.equal(report.counts.endings, 6)
+        assert.equal(report.counts.endings, data.endings.length)
         assert.equal(report.counts.content_versions, 1)
+        const trackCounts = await db('quarter_events').select('track').count('* as n').groupBy('track')
+        const counts = new Map(trackCounts.map(({ track, n }) => [track, Number(n)]))
+        for (const track of [{ id: 'programmer', ages: data.ages }, ...data.majors]) {
+            assert.equal(counts.get(track.id), track.ages.reduce((sum, age) => sum + age.event.flat().length, 0))
+        }
         player = await db('users').where({ username: 'local_player' }).first()
         service = await profileService(db, player.id)
     })
@@ -82,13 +87,32 @@ export async function exercise(db, t) {
         assert.equal(Number((await db('run_actions').count('* as n').first()).n), 1)
         await assert.rejects(service.archiveCareer({ id, state:{...state,life:-1} }), e => e.status === 409)
     })
+    await t.test('campus archives keep the major, enforce its duration and accept duplicate delivery', async () => {
+        const major = data.majors.find(item => item.id === 'accounting')
+        const id = randomUUID()
+        const state = {
+            major: major.id,
+            props: { current: { age: data.campusQuarters, charm: 18, intelligence: 17, strength: 8, money: 10, spirit: 11 } },
+            life: 0,
+            events: [major.ages[0].event[0][0][0], major.endingEvents[0]],
+            decisions: [],
+        }
+        const attempts = await Promise.all([service.archiveCareer({ id, state }), service.archiveCareer({ id, state })])
+        assert.deepEqual(attempts.map(result => result.repeated).sort(), [false, true])
+        assert.equal((await db('career_runs').where({ id }).first()).state.major, 'accounting')
+        await assert.rejects(service.archiveCareer({ id: randomUUID(), state: { ...state, major: 'unknown' } }), e => e.status === 400)
+        const overlong = { ...state, props: { current: { ...state.props.current, age: data.campusQuarters + 1 } } }
+        await assert.rejects(service.archiveCareer({ id: randomUUID(), state: overlong }), e => e.status === 400)
+    })
     await t.test('HTTP endpoints read PostgreSQL and reject cross-site writes', async () => {
         const app = await createApp({ connection: db.client.config.connection, userId:player.id, port:8787 })
         await new Promise(resolve => app.server.listen(0,'127.0.0.1',resolve))
         try {
             const base = `http://127.0.0.1:${app.server.address().port}`
             assert.equal((await (await fetch(base+'/healthz')).json()).storage, 'postgresql')
-            assert.equal((await (await fetch(base+'/api/content')).json()).snapshot.events.length,98)
+            const { snapshot } = await (await fetch(base+'/api/content')).json()
+            assert.equal(snapshot.events.length, data.events.length)
+            assert.deepEqual(snapshot.majors, data.majors)
             assert.equal((await fetch(base+'/api/profile',{method:'PATCH',headers:{Origin:'https://other.example','Content-Type':'application/json'},body:'{}'})).status,403)
         } finally { await app.close() }
     })
@@ -96,6 +120,6 @@ export async function exercise(db, t) {
         const before = await service.get()
         await db.seed.run()
         assert.deepEqual(await service.get(),before)
-        assert.equal(Number((await db('career_runs').count('* as n').first()).n),1)
+        assert.equal(Number((await db('career_runs').count('* as n').first()).n),2)
     })
 }

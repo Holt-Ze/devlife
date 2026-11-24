@@ -52,7 +52,7 @@ export function pullChara(
     for (let i = 0; i < availableCount; i++) {
         const weightMap = deriveWeightMap(tms.times + i, knife, drawns)
         picked.forEach(id => weightMap.delete(id))
-        const id = pickWeight(Array.from(weightMap.entries()), rng)!
+        const id = pickWeight(Array.from(weightMap.entries()), rng) ?? pick([...weightMap.keys()], rng)!
         picked.add(id)
         drawns.set(id, (drawns.get(id) ?? 0) + 1)
     }

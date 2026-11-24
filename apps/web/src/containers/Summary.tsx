@@ -6,29 +6,31 @@ import {
     useIsClassic,
     useGameState,
 } from '@remake/hooks'
-import { endings } from '@remake/data'
+import { endings, events, majors, type MajorId } from '@remake/data'
 import { useEndJudge } from '@/hooks/judge'
 import {
-    properties,
+    attributeLabels,
     judgeDisplay,
-    quarterLabel,
+    journeyTime,
 } from '@remake/data/etc/display'
-import { events } from '@remake/data'
+import EventReview from '@/components/EventReview'
+import CareerAnalysis from '@/components/CareerAnalysis'
 import { ChoiceChanges } from '@/components/Dialogue'
 import { toastAchvs, toastMsg } from '@/toast'
 import Talent from '@/components/Talent'
 import './Summary.css'
 import { saveCareer } from '@/storage/postgres'
 
-function Judges() {
+function Judges({ major }: { major?: MajorId }) {
     const judges = useEndJudge()
+    const labels = attributeLabels(major)
     return (
         <ul className="judge-list">
             {judges.map(([key, { value, grade, level }]) => (
                 <li className={`${key} grade-${grade}`} key={key}>
-                    <span className="property">{properties[key]}</span>
+                    <span className="property">{labels[key]}</span>
                     <span className="value font-mono">{value}</span>
-                    <span className="level">{judgeDisplay(key, level)}</span>
+                    <span className="level">{major && key === 'age' ? journeyTime(value, major) : judgeDisplay(key, level)}</span>
                 </li>
             ))}
         </ul>
@@ -68,6 +70,7 @@ function TalentList({ picked, picker }: TalentListProps) {
 
 export default function Summary() {
     const state = useGameState()!
+    const major = state.major ? majors.get(state.major) : undefined
     const archiveId = useRef(crypto.randomUUID())
     useEffect(() => {
         void saveCareer(archiveId.current, state).then(ok => {
@@ -75,6 +78,11 @@ export default function Summary() {
         })
     }, [state])
     const ending = Array.from(endings).find(([id]) => state.events.has(id))?.[1]
+    const matchedPath = major?.pathways.find(path => path.name === ending?.name)
+    const evidence = matchedPath ? state.decisions.flatMap(decision => {
+        const choice = events.get(decision.event)?.choices?.find(option => option.id === decision.choice)
+        return choice && matchedPath.evidence.includes(choice.event) ? [choice.label] : []
+    }) : []
     const isClassic = useIsClassic()
     const [locked, picker, end] = useEnd()
     const handlePicker = (id: number) => {
@@ -88,11 +96,16 @@ export default function Summary() {
     return (
         <div className="screen summary">
             <div className="ending-card">
-                <div className="eyebrow">CAREER RETROSPECTIVE / 职业复盘</div>
+                <div className="eyebrow">{major ? major.name + ' · 生涯复盘' : '程序员职场篇 · 职业复盘'}</div>
                 <h2>{ending?.name ?? '本次生涯已完成'}</h2>
                 <p>{ending?.description}</p>
+                {evidence.length > 0 && (
+                    <p className="ending-evidence">你通过{evidence.map(label => `「${label}」`).join('、')}积累了申请这个岗位的经历。</p>
+                )}
             </div>
-            <Judges />
+            <CareerAnalysis final={state.props.current} major={state.major} />
+            <EventReview final={state.props.current} major={state.major} />
+            <Judges major={state.major} />
             <p className="alloc-hint">
                 各项为结束时数值。成长分根据历程中的属性峰值计算，仅记录这段经历。
             </p>
@@ -100,29 +113,18 @@ export default function Summary() {
                 <section className="decision-history">
                     <h3>塑造这段生涯的 {state.decisions.length} 次决定</h3>
                     <ol>
-                        {state.decisions.map((decision) => (
-                            <li key={decision.instance}>
-                                <time>
-                                    {quarterLabel(decision.quarter)} ·{' '}
-                                    {
-                                        events.get(decision.event)?.dialogue
-                                            ?.title
-                                    }
-                                </time>
-                                <strong>
-                                    {
-                                        events
-                                            .get(decision.event)
-                                            ?.choices?.find(
-                                                (choice) =>
-                                                    choice.id ===
-                                                    decision.choice,
-                                            )?.label
-                                    }
-                                </strong>
-                                <ChoiceChanges changes={decision.changes} />
-                            </li>
-                        ))}
+                        {state.decisions.map((decision) => {
+                            const scene = events.get(decision.event)
+                            const choice = scene?.choices?.find(option => option.id === decision.choice)
+                            return (
+                                <li key={decision.instance}>
+                                    <time>{journeyTime(decision.quarter, state.major)} · {scene?.dialogue?.title}</time>
+                                    <strong>{choice?.label}</strong>
+                                    {choice && <p>{events.get(choice.event)?.event}</p>}
+                                    <ChoiceChanges changes={decision.changes} major={state.major} />
+                                </li>
+                            )
+                        })}
                     </ol>
                 </section>
             )}

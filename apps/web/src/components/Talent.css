@@ -43,20 +43,3 @@
         &::before, &::after { color: var(--color); }
     }
 }
-html[data-theme='dark'] {
-    .talent{ 
-        @media (hover: hover) {
-            &:hover { background: oklch(from var(--grade-color) calc(l - 0.5) c h); }
-            &.selected:hover { background: oklch(from var(--grade-color) calc(l - 0.1) c h); }
-        }
-        &:active { 
-            background: oklch(from var(--grade-color) calc(l - 0.5) c h); 
-            transition: none;
-        }
-        &.selected:active { 
-            background: oklch(from var(--grade-color) calc(l - 0.1) c h);
-            transition: none;
-        }
-        .talent-description { color: oklch(from var(--color) calc(l - 0.2) c h); }
-    }
-}

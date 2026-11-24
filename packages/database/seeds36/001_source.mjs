@@ -34,7 +34,20 @@ export async function seed(knex) {
         }
         // Replacing only source catalogue memberships; no player/history rows are touched.
         await db('quarter_events').del()
-        for (const item of data.ages) for (const [pool_level, pool] of item.event.entries()) for (const [position, [id, weight]] of pool.entries()) await db('quarter_events').insert({ quarter: item.age, pool_level, position, event_id: eventMap.get(id), weight })
+        const tracks = [{ id: 'programmer', ages: data.ages }, ...(data.majors ?? [])]
+        const pools = tracks.flatMap(track =>
+            track.ages.flatMap(item => item.event.flatMap((pool, pool_level) =>
+                pool.map(([id, weight], position) => ({
+                    track: track.id,
+                    quarter: item.age,
+                    pool_level,
+                    position,
+                    event_id: eventMap.get(id),
+                    weight,
+                })),
+            )),
+        )
+        await db('quarter_events').insert(pools)
         for (const item of data.endings) await db('endings').insert({ event_id: eventMap.get(item.event), name: item.name, description: item.description }).onConflict('event_id').merge()
         await db('content_versions').insert({ snapshot: JSON.stringify(data), checksum, created_by: admin.id, source_tag: 'game36', career_quarters: 36 }).onConflict('checksum').ignore()
         await db('player_profiles').insert({ user_id: player.id }).onConflict('user_id').ignore()

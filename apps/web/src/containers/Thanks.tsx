@@ -28,7 +28,7 @@ export function Thanks() {
     const group2 = shuffle(groups.get(Group.G2) ?? [])
     return (
         <div className="screen thanks">
-            <div className="step-heading"><div className="eyebrow">OPEN SOURCE / 开源致谢</div><h2>关于程序员模拟器</h2><p>程序员主题的文字重开游戏。选择天赋、分配起点，通过关键对话与日常经历探索不同职业结局。</p></div>
+            <div className="step-heading"><h2>关于大学生生涯模拟器</h2><p>通过专业课程、实践和毕业后的经历，探索每个选择带来的机会与代价。</p></div>
             <a className="project-source" href="https://github.com/VickScarlet/remake" target="_blank" rel="noreferrer">上游项目：VickScarlet/remake · MIT License ↗</a>
             <button className="primary" onClick={goHome}>
                 返回

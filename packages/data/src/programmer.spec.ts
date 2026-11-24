@@ -1,12 +1,16 @@
 import { describe, test, expect } from 'bun:test'
-import { ages, events, talents, characters, CareerQuarters } from './index'
+import { ages, events, talents, characters, CareerQuarters, CampusQuarters, majors } from './index'
 import { parse } from '../../condition/index'
 
 describe('Programmer content integrity', () => {
     test('every quarter has a valid default pool and branch targets exist', () => {
-        for (let quarter = 0; quarter <= CareerQuarters; quarter++) {
-            const age = ages.get(quarter)!
-            expect(age).toBeDefined()
+        expect(ages.size).toBe(CareerQuarters + 1)
+        for (const major of majors.values()) {
+            expect(major.ages).toHaveLength(CampusQuarters + 1)
+            major.ages.forEach((age, quarter) => expect(age.age).toBe(quarter))
+        }
+        const schedule = [...ages.values(), ...[...majors.values()].flatMap(major => major.ages)]
+        for (const age of schedule) {
             expect(age.event[0]!.length).toBeGreaterThan(0)
             for (const [id, weight] of age.event.flat()) {
                 expect(events.has(id)).toBe(true)

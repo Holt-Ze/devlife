@@ -1,20 +1,21 @@
 :root {
-    color-scheme: light dark;
-    --base-text-color: light-dark(#253139, #e5e9ed);
-    --base-background-color: light-dark(#f4f7f7, #101316);
-    --panel-background: light-dark(#ffffff, #161a1e);
-    --panel-border: light-dark(#dbe3e3, #292f35);
-    --muted-text: light-dark(#65747c, #87939e);
-    --base-shadow: light-dark(#00000010, #23456710);
+    color-scheme: only light;
+    --page-background: #eae9e0;
+    --base-background-color: #f6f4ec;
+    --panel-background: #fcfaf4;
+    --panel-border: #d9d9cc;
+    --base-text-color: #29372e;
+    --muted-text: #546357;
+    --base-shadow: #34493819;
 
-    --color-grade-0: light-dark(#4d626b, #b9c4ce);
-    --color-grade-1: light-dark(#2679ad, #80bded);
-    --color-grade-2: light-dark(#8050ba, #bfa2ed);
-    --color-grade-3: light-dark(#997022, #e8c073);
+    --color-grade-0: #4d6155;
+    --color-grade-1: #2e6377;
+    --color-grade-2: #735483;
+    --color-grade-3: #865b35;
 
-    --color-success: light-dark(#167851, #87d9ad);
-    --color-info: light-dark(#2876a5, #80bded);
-    --color-error: light-dark(#e42b2b, #ff6969);
+    --color-success: #365e48;
+    --color-info: #366476;
+    --color-error: #994736;
     --color-primary: var(--color-success);
     --color-secondary: var(--color-info);
 }

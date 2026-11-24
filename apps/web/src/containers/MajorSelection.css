@@ -1,0 +1,117 @@
+.screen.major-selection {
+    align-items: stretch;
+    max-width: 1080px;
+    gap: 26px;
+}
+
+.major-selection h1 {
+    margin: 0;
+    font-size: clamp(30px, 4.5vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -.04em;
+}
+
+.major-selection header p {
+    margin: 12px 0 0;
+    color: var(--muted-text);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.major-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.major-grid .major-card {
+    --major-ink: #315843;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 205px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 9px;
+    padding: 19px;
+    text-align: left;
+    color: var(--base-text-color);
+    background: var(--panel-background);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+}
+
+.major-grid .major-card[data-major='mechanical'] { --major-ink: #435a69; }
+.major-grid .major-card[data-major='accounting'] { --major-ink: #636027; }
+.major-grid .major-card[data-major='chinese'] { --major-ink: #874b3f; }
+.major-grid .major-card[data-major='visual-design'] { --major-ink: #744779; }
+.major-grid .major-card[data-major='nursing'] { --major-ink: #2d6266; }
+
+.major-grid .major-card:active {
+    border-color: var(--major-ink);
+    background: color-mix(in srgb, var(--panel-background) 92%, var(--major-ink));
+}
+
+@media (hover: hover) {
+    .major-grid .major-card:hover {
+        border-color: var(--major-ink);
+        color: var(--base-text-color);
+        background: color-mix(in srgb, var(--panel-background) 95%, var(--major-ink));
+    }
+}
+
+.major-card-category,
+.major-card-record {
+    color: var(--major-ink);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.major-card strong {
+    padding-right: 18px;
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.3;
+}
+
+.major-card-copy {
+    flex: 1;
+    font-size: 14px;
+    color: var(--muted-text);
+    line-height: 1.65;
+}
+
+.major-card-paths {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    color: var(--major-ink);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.major-card-paths > span {
+    padding: 4px 8px;
+    background: color-mix(in srgb, var(--major-ink) 9%, var(--panel-background));
+    border-radius: 6px;
+}
+
+.major-card-arrow {
+    position: absolute;
+    top: 19px;
+    right: 17px;
+    color: var(--major-ink);
+    font-size: 18px;
+    line-height: 1;
+}
+
+@media (max-width: 1040px) {
+    .major-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 580px) {
+    .screen.major-selection { gap: 18px; }
+    .major-grid { grid-template-columns: 1fr; gap: 10px; }
+    .major-grid .major-card { min-height: 0; padding: 16px; }
+}

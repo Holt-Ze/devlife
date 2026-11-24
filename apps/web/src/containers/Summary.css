@@ -41,3 +41,38 @@
         width: 100%;
     }
 }
+
+.ending-card {
+    padding: clamp(20px, 4vw, 40px);
+    background:
+        linear-gradient(90deg, #fbf8ed 5%, #fbf8edf4 48%, #fbf8ed85 76%, #fbf8ed3d),
+        url('../assets/retrospective-desk.webp') right 64% / cover no-repeat,
+        var(--panel-background);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+}
+
+.ending-card h2 {
+    font-size: clamp(23px, 4vw, 34px);
+    margin: 12px 0;
+}
+
+.ending-card p {
+    max-width: 32rem;
+    color: var(--muted-text);
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.ending-card .ending-evidence {
+    margin-top: 10px;
+    color: var(--base-text-color);
+}
+
+.screen.summary .decision-history li > p {
+    margin: 0;
+    color: var(--muted-text);
+    font-size: 13px;
+    line-height: 1.6;
+}

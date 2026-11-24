@@ -1,0 +1,109 @@
+.career-analysis {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    background: var(--panel-background);
+}
+
+.career-radar,
+.career-advice {
+    margin: 0;
+    padding: clamp(16px, 3vw, 26px);
+    min-width: 0;
+}
+
+.career-analysis h3 {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.career-radar svg {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    margin: 12px auto 2px;
+    overflow: visible;
+}
+
+.career-radar text {
+    fill: var(--base-text-color);
+    font-size: 13px;
+    font-weight: 550;
+}
+
+.radar-grid {
+    fill: none;
+    stroke: var(--panel-border);
+    stroke-width: 1;
+}
+
+.radar-profile {
+    fill: color-mix(in srgb, var(--color-primary) 18%, transparent);
+    stroke: var(--color-primary);
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+.radar-marker {
+    fill: var(--color-primary);
+    stroke: var(--panel-background);
+    stroke-width: 1.5;
+}
+
+.career-radar figcaption,
+.career-advice p,
+.career-advice li span {
+    color: var(--muted-text);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.career-advice {
+    border-left: 1px solid var(--panel-border);
+}
+
+.career-advice p {
+    margin: 12px 0 0;
+}
+
+.career-advice p strong {
+    color: var(--base-text-color);
+}
+
+.career-advice ul {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.career-advice li {
+    display: grid;
+    gap: 4px;
+    padding: 11px 14px;
+    background: var(--base-background-color);
+    border-left: 2px solid var(--color-primary);
+    border-radius: 0 7px 7px 0;
+}
+
+.career-advice li strong {
+    color: var(--color-primary);
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .career-analysis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .career-advice {
+        border-left: 0;
+        border-top: 1px solid var(--panel-border);
+    }
+}
+
+.attribute-growth { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.attribute-growth th, .attribute-growth td { padding: 7px 0; text-align: right; border-bottom: 1px solid var(--panel-border); }
+.attribute-growth th:first-child { text-align: left; }
+.attribute-growth thead { color: var(--muted-text); }

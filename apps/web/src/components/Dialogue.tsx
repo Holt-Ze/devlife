@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
-import { events, type EventChoice } from '@remake/data'
+import { events, type EventChoice, type MajorId } from '@remake/data'
 import type { Allocation, PendingChoice } from '@remake/hooks'
-import { properties, quarterLabel } from '@remake/data/etc/display'
+import { attributeLabels, journeyTime } from '@remake/data/etc/display'
 import './Dialogue.css'
 
-export function ChoiceChanges({ changes }: { changes: Partial<Allocation> }) {
+export function ChoiceChanges({ changes, major }: { changes: Partial<Allocation>; major?: MajorId }) {
+    const properties = attributeLabels(major)
     return (
         <span className="choice-changes">
             {Object.entries(changes)
@@ -24,13 +25,17 @@ export function ChoiceChanges({ changes }: { changes: Partial<Allocation> }) {
 }
 
 export default function Dialogue({
+    major,
     pending,
     choices,
+    resumeAuto,
     onChoose,
     onHistory,
 }: {
+    major?: MajorId
     pending: PendingChoice
     choices: readonly (EventChoice & { available: boolean })[]
+    resumeAuto: boolean
     onChoose: (choice: string) => void
     onHistory: () => void
 }) {
@@ -63,7 +68,7 @@ export default function Dialogue({
         <section className="dialogue-stage" aria-labelledby="dialogue-title">
             <div className="dialogue-scene-bar">
                 <span className="eyebrow">
-                    BRANCH POINT / {quarterLabel(pending.quarter)}
+                    关键选择 · {journeyTime(pending.quarter, major)}
                 </span>
                 <button className="dialogue-history" onClick={onHistory}>
                     回看经历 ↗
@@ -135,7 +140,7 @@ export default function Dialogue({
                                         ? choice.description
                                         : `未解锁 · ${choice.lockedReason ?? '尚未满足条件'}`}
                                 </span>
-                                <ChoiceChanges changes={changes} />
+                                <ChoiceChanges changes={changes} major={major} />
                             </span>
                             <span className="option-arrow" aria-hidden="true">
                                 {choice.available ? '↗' : '◇'}
@@ -145,7 +150,8 @@ export default function Dialogue({
                 })}
             </div>
             <p className="dialogue-footnote">
-                自动运行已暂停 · 选择将影响后续经历与职业结局{' '}
+                {resumeAuto && '选择后将继续自动运行 · '}
+                选择将影响后续经历与职业结局{' '}
                 <span className="font-mono">[1–{choices.length}]</span>
             </p>
         </section>

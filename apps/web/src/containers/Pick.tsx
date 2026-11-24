@@ -1,9 +1,10 @@
 import { useTalentPuller, useTalentPicker } from '@remake/hooks'
 import { useTalentSubmit, useSubmitIsEnable } from '@remake/hooks'
+import { useSelectedMajor } from '@remake/hooks'
 import { PullCount, dev } from '@/config'
 import { toastMsg } from '@/toast'
 import Talent from '@/components/Talent'
-import { talents as talentData } from '@remake/data'
+import { majors, talents as talentData } from '@remake/data'
 import './Pick.css'
 
 export function Pick() {
@@ -11,6 +12,8 @@ export function Pick() {
     const [talents, picker] = useTalentPicker()
     const { enabled, min, max } = useSubmitIsEnable()
     const submit = useTalentSubmit()
+    const majorId = useSelectedMajor()
+    const major = majorId ? majors.get(majorId) : undefined
     const select = (id: number) => {
         const result = picker(id)
         if (result.type === 'ne')
@@ -32,8 +35,8 @@ export function Pick() {
         return (
             <div className="screen talent-pick">
                 <div className="step-heading">
-                    <div className="eyebrow">01 / TALENTS</div>
-                    <h2>你的初始技能包</h2>
+                    {major && <div className="eyebrow">{major.name}</div>}
+                    <h2>抽取你的天赋</h2>
                     <p>
                         每个人都有擅长的事。从十个天赋中选出三个，带进这段旅程。
                     </p>
@@ -56,7 +59,7 @@ export function Pick() {
     return (
         <div className="screen talent-pick">
             <div className="step-heading">
-                <div className="eyebrow">01 / TALENTS</div>
+                {major && <div className="eyebrow">{major.name}</div>}
                 <h2>
                     选择你的天赋{' '}
                     <span className="selection-count">

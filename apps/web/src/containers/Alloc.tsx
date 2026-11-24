@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useAllocator, usePointRandomizer, useLeftPoints } from '@remake/hooks'
-import { usePicked, useReplaced, useStart, useIsClassic } from '@remake/hooks'
+import { usePicked, useReplaced, useStart, useIsClassic, useSelectedMajor } from '@remake/hooks'
 import type { AdditionalPoint } from '@remake/hooks'
-import { properties } from '@remake/data/etc/display'
+import { attributeLabels } from '@remake/data/etc/display'
 import { keys } from '@remake/vitex'
 import { judgeGradeByValue } from '@/config'
-import { talents } from '@remake/data'
+import { CampusQuarters, CareerQuarters, talents } from '@remake/data'
 import { toastAchvs, toastMsg } from '@/toast'
 import Replaced from '@/components/Replaced'
 import './Alloc.css'
@@ -67,6 +67,8 @@ function PointsDetail({ base, source, fixed }: PointsDetailProps) {
 
 export function Alloc() {
     const isClassic = useIsClassic()
+    const major = useSelectedMajor()
+    const properties = attributeLabels(major)
     const picked = usePicked()
     const {
         talents: { chains },
@@ -85,9 +87,8 @@ export function Alloc() {
     return (
         <div className="screen point-allocation">
             <div className="step-heading">
-                <div className="eyebrow">02 / CONFIGURE</div>
                 <h2>配置你的起点</h2>
-                <p>技术解决问题，沟通连接团队。也别忘了给健康留一点余地。</p>
+                <p>{major ? '分配专业能力、沟通、健康与积蓄。它们会影响实践机会和你能承担的压力。' : '分配技术、沟通、健康与积蓄，带着它们进入第一份工作。'}</p>
             </div>
             <ul className="talent-list">
                 {Array.from(picked, (id) => (
@@ -149,13 +150,11 @@ export function Alloc() {
                     className={left ? 'error' : 'primary'}
                     onClick={handleNext}
                 >
-                    开始职业生涯
+                    {major ? '开始大学生涯' : '开始职业生涯'}
                 </button>
             </div>
             <p className="alloc-hint">
-                心态初始为
-                5；积蓄为抽象储备点数。健康或心态耗尽将提前休整，最长运行 36
-                个季度。
+                心态初始为 5。健康或心态耗尽时会提前休整。本篇最多推进 {major ? CampusQuarters : CareerQuarters} 个季度。
             </p>
         </div>
     )

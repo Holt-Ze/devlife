@@ -1,4 +1,4 @@
-import type { Achievement, Event, Talent } from '@remake/data'
+import type { Achievement, Event, MajorId, Talent } from '@remake/data'
 import { produce, enableMapSet } from 'immer'
 import { sum, keys } from '@remake/vitex'
 enableMapSet()
@@ -41,6 +41,7 @@ export interface Decision extends PendingChoice {
 }
 
 export interface GameState {
+    major?: MajorId // 缺省时运行原有的程序员职场篇
     props: HLProperties // 本局属性
     life: number // 本局生命值
     talents: Set<Talent['id']> // 本局拥有的天赋
@@ -65,8 +66,10 @@ export interface ProfileState {
 export function createState(
     allocation: Allocation,
     talents?: Iterable<Talent['id']>,
+    major?: MajorId,
 ): GameState {
     return {
+        ...(major ? { major } : {}),
         props: createHLProperties(allocation),
         life: 1,
         talents: new Set(talents),

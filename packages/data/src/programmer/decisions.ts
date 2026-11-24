@@ -413,12 +413,33 @@ export function attachDecisions(items: Event[]) {
         exclude: 'EVT?[20214]',
         effect: { INT: 1, SPR: 2 },
     })
+    scene(20021, '新项目组开放轮岗，你有一季时间体验不同岗位。', {
+        title: '这一季，你想坐到谁的工位旁？', speaker: '许姐', role: '轮岗协调人', portrait: '许',
+        text: '三个小组都缺一双手。挑一个你愿意从头学起的问题，也可以继续手里的项目。',
+    }, [
+        { id: 'reliability', label: '随值班组做恢复演练', description: '学习可靠性工程，承担一次夜间轮值。', event: outcome(21101, '你计时演练了一次备份恢复，发现手册漏写了权限交接。值班组请你一起修订流程。', { INT: 2, STR: -1 }) },
+        { id: 'analytics', label: '和运营重算留存指标', description: '进入数据产品组，学习辨别指标偏差。', event: outcome(21102, '你把新老用户分开统计，发现平均值掩盖了新用户流失。运营决定重做入门实验。', { INT: 1, CHR: 2 }) },
+        { id: 'access', label: '跟进读屏用户的可用性测试', description: '进入无障碍体验组，练习访谈和交互验收。', event: outcome(21103, '一位读屏用户在付款弹窗里迷了路。你记录焦点顺序，和设计师一起修改了组件。', { CHR: 2, SPR: 1 }) },
+        { id: 'current', label: '继续打磨当前项目', description: '把这一季留给已有承诺。', event: outcome(21104, '你完成积压的交付，给下个版本留出了测试时间。', { SPR: 1, INT: 1 }) },
+    ])
+    scene(20033, '一批项目即将交接。你可以认领做过的专项，让成果在团队中延续。', {
+        title: '交接之前，再负责一件事', speaker: '许姐', role: '项目协调人', portrait: '许',
+        text: '以前轮岗积累的经验，现在可以用来独立负责一个岗位。也可以按原计划完成交接。',
+    }, [
+        { id: 'sre', label: '接任可靠性工程师', description: '为核心服务建立恢复演练与值班交接制度。', condition: 'EVT?[21101]', lockedReason: '需要值班组轮岗经历', event: outcome(21105, '你带着接班同事完成无提示恢复演练，修正了最后一个失效的备份检查。', { INT: 2, CHR: 1 }) },
+        { id: 'data', label: '负责数据产品', description: '让实验结果进入产品决策流程。', condition: 'EVT?[21102]', lockedReason: '需要数据产品组轮岗经历', event: outcome(21106, '你主持实验复核，把结论和样本局限写进报告，团队据此调整了新手流程。', { CHR: 2, MNY: 1 }) },
+        { id: 'inclusive', label: '负责无障碍体验', description: '带用户一起制定上线验收标准。', condition: 'EVT?[21103]', lockedReason: '需要无障碍体验组轮岗经历', event: outcome(21107, '你邀请用户回测付款流程，把键盘操作和读屏验收加入发布清单。', { CHR: 2, INT: 1 }) },
+        { id: 'handoff', label: '完成交接，沿原方向发展', description: '整理手册，把职责平稳交给下一位同事。', event: outcome(21108, '接班同事按照你的手册完成了第一次独立发布。', { SPR: 2 }) },
+    ])
     const finale = items.findIndex((item) => item.id === 20036)
     const old = items[finale]!
     items[finale] = {
         ...old,
         branch: [
             old.branch![0]!,
+            { condition: 'EVT?[21105]', event: 20907 },
+            { condition: 'EVT?[21106]', event: 20908 },
+            { condition: 'EVT?[21107]', event: 20909 },
             { condition: '(EVT?[20827])&(MNY>=16)', event: 20903 },
             { condition: '(EVT?[20825])&(STR>=10)&(SPR>=12)', event: 20904 },
             { condition: '(EVT?[20813])&(CHR>=22)', event: 20902 },

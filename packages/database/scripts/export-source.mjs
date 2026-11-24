@@ -24,9 +24,32 @@ async function compile(file) {
     }
 }
 await compile(path.join(sourceRoot, 'index.ts'))
-const { events, talents, achievements, characters, ages, endings, CareerQuarters, specialThanks } = await import(pathToFileURL(path.join(buildRoot, 'index.mjs')))
-const result = { formatVersion: 2, source: 'game36', careerQuarters: CareerQuarters, events: [...events.values()], talents: [...talents.values()], achievements: [...achievements.values()], characters: [...characters.values()], ages: [...ages.values()], endings: [...endings].map(([event, definition]) => ({ event, ...definition })), specialThanks }
+const { events, talents, achievements, characters, ages, endings, CareerQuarters, CampusQuarters, majors, specialThanks } = await import(pathToFileURL(path.join(buildRoot, 'index.mjs')))
+const result = {
+    formatVersion: 2,
+    source: 'game36',
+    careerQuarters: CareerQuarters,
+    campusQuarters: CampusQuarters,
+    majors: [...majors.values()],
+    events: [...events.values()],
+    talents: [...talents.values()],
+    achievements: [...achievements.values()],
+    characters: [...characters.values()],
+    ages: [...ages.values()],
+    endings: [...endings].map(([event, definition]) => ({ event, ...definition })),
+    specialThanks,
+}
 const dataDir = fileURLToPath(new URL('../data/', import.meta.url))
 await mkdir(dataDir, { recursive: true })
 await writeFile(path.join(dataDir, 'game36-source.json'), JSON.stringify(result, null, 2) + '\n')
-console.log(JSON.stringify({ quarters: CareerQuarters, events: events.size, choices: result.events.reduce((n, item) => n + (item.choices?.length || 0), 0), talents: talents.size, achievements: achievements.size, characters: characters.size, endings: endings.size, quarterDefinitions: ages.size }))
+console.log(JSON.stringify({
+    careerQuarters: CareerQuarters,
+    campusQuarters: CampusQuarters,
+    majors: majors.size,
+    events: events.size,
+    choices: result.events.reduce((n, item) => n + (item.choices?.length || 0), 0),
+    talents: talents.size,
+    achievements: achievements.size,
+    characters: characters.size,
+    endings: endings.size,
+}))

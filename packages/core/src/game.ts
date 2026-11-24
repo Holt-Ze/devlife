@@ -1,5 +1,5 @@
 import type { Achievement, Event, Talent } from '@remake/data'
-import { ages, AchievementOpportunity as Ao } from '@remake/data'
+import { ages, majors, AchievementOpportunity as Ao } from '@remake/data'
 import type { GameState, ProfileState, Decision, Allocation } from './state'
 import { createState, nextProfile, propsEffect } from './state'
 import { summary as stateSummary } from './state'
@@ -67,7 +67,7 @@ export function next(
     })
     const age = s.props.current.age
     const tr = ttr(s, profile, rng)
-    const events = ages.get(age)?.event
+    const events = (state.major ? majors.get(state.major)?.ages[age] : ages.get(age))?.event
     if (!events) throw new Error('No event pool for quarter ' + age)
     let event: Event['id'] | null = null
     for (const level of events) {

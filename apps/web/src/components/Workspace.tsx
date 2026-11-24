@@ -1,20 +1,23 @@
 import type { ReactNode } from 'react'
-import { Step, useStep, useProfile, useGoHome } from '@remake/hooks'
+import { Step, useStep, useProfile, useGoHome, useRemake, useSelectedMajor } from '@remake/hooks'
 
 const steps: Record<Step, [string, string]> = {
-    [Step.Idle]: ['welcome.ts', '准备就绪'],
+    [Step.Idle]: ['welcome.ts', '生涯模拟'],
+    [Step.Major]: ['majors.ts', '选择专业'],
     [Step.Mode]: ['new-career.ts', '选择起点'],
     [Step.Chara]: ['developer.json', '角色档案'],
-    [Step.Pick]: ['talents.ts', '01 / 抽取天赋'],
-    [Step.Alloc]: ['config.json', '02 / 配置属性'],
-    [Step.Play]: ['career.log', '03 / 生涯运行中'],
-    [Step.Summary]: ['retrospective.md', '04 / 职业复盘'],
+    [Step.Pick]: ['talents.ts', '抽取天赋'],
+    [Step.Alloc]: ['config.json', '配置属性'],
+    [Step.Play]: ['career.log', '生涯进行中'],
+    [Step.Summary]: ['retrospective.md', '生涯复盘'],
     [Step.Achv]: ['achievements.json', '成就档案'],
     [Step.Thanks]: ['README.md', '关于项目'],
 }
 export default function Workspace({ children }: { children: ReactNode }) {
     const step = useStep()
     const goHome = useGoHome()
+    const chooseMajor = useRemake(true)
+    const inCampusSetup = useSelectedMajor() && (step === Step.Pick || step === Step.Alloc)
     const [profile] = useProfile()
     const [file, label] = steps[step]
     return (
@@ -24,38 +27,13 @@ export default function Workspace({ children }: { children: ReactNode }) {
                     <span className="brand-mark">&lt;/&gt;</span> DEV
                     <span className="brand-light">LIFE</span>
                     <span className="brand-divider" />
-                    程序员模拟器
+                    生涯模拟器
                 </div>
-                <span className="header-note font-mono">
-                    a new branch of your life
-                </span>
-                <span className="window-dots">
-                    <i />
-                    <i />
-                    <i />
-                </span>
+                <span className="header-note">{label}</span>
             </header>
             <div className="workspace-body">
-                <aside className="activity-bar" aria-hidden="true">
-                    <span className="activity-active">▱</span>
-                    <span>⌘</span>
-                    <span>⑂</span>
-                    <span className="activity-bottom">{'{ }'}</span>
-                </aside>
                 <main className={`workspace-main step-${step}`}>
-                    <div className="editor-tabs">
-                        <div className="editor-tab">
-                            <span className="file-symbol">
-                                {file.endsWith('.ts') ? 'TS' : '#'}
-                            </span>
-                            {file}
-                            <span className="tab-dot" />
-                        </div>
-                        <span className="editor-tab-note">{label}</span>
-                    </div>
-                    <div className="breadcrumb font-mono">
-                        workspace <span>›</span> programmer-simulator{' '}
-                        <span>›</span> <strong>{file}</strong>
+                    <div className="breadcrumb">
                         {![
                             Step.Idle,
                             Step.Play,
@@ -63,8 +41,8 @@ export default function Workspace({ children }: { children: ReactNode }) {
                             Step.Achv,
                             Step.Thanks,
                         ].includes(step) && (
-                            <button className="workspace-back" onClick={goHome}>
-                                返回首页
+                            <button className="workspace-back" onClick={inCampusSetup ? chooseMajor : goHome}>
+                                {inCampusSetup ? '返回专业选择' : '返回首页'}
                             </button>
                         )}
                     </div>
@@ -72,14 +50,8 @@ export default function Workspace({ children }: { children: ReactNode }) {
                 </main>
             </div>
             <footer className="workspace-status font-mono">
-                <span>
-                    ⑂ main <span className="status-ok">✓</span>
-                </span>
-                <span>已完成 {profile.times} 段生涯</span>
-                <span className="status-right">
-                    UTF-8 <span>TypeScript</span>
-                    <span className="status-live">●</span> 本地运行
-                </span>
+                <span>{file}</span>
+                <span className="status-right">已完成 {profile.times} 段生涯</span>
             </footer>
         </div>
     )

@@ -5,11 +5,18 @@ import {
 import type { Character } from '../character.types'
 import { SpecialThanksGroup, type SpecialThanks } from '../specialthanks.types'
 
+import { majors } from '../campus/index'
+import { campusEventIds } from '../campus/shared'
+
+const majorList = [...majors.values()]
+const practiceEvents = majorList.flatMap(major => major.pathways.map(path => path.evidence[0]))
+const graduateEndings = majorList.flatMap(major => major.endingEvents)
+
 const items: Achievement[] = [
     {
         id: 301,
         name: 'Hello, World!',
-        description: '开始第一段程序员生涯',
+        description: '开始一段新的生涯',
         condition: 'TMS>=0',
         opportunity: Ao.Start,
         grade: 0,
@@ -35,8 +42,8 @@ const items: Achievement[] = [
     },
     {
         id: 304,
-        name: '一年一提交',
-        description: '完成第一年的职业历程',
+        name: '度过第一年',
+        description: '完成第一年的生涯历程',
         condition: 'AGE>=4',
         opportunity: Ao.Trajectory,
         grade: 0,
@@ -161,8 +168,8 @@ const items: Achievement[] = [
     },
     {
         id: 318,
-        name: '重新 checkout',
-        description: '完成五次职涯重启',
+        name: '再次出发',
+        description: '完成五次生涯',
         condition: 'TMS>=4',
         opportunity: Ao.End,
         grade: 1,
@@ -171,7 +178,7 @@ const items: Achievement[] = [
     {
         id: 319,
         name: '阅历仓库',
-        description: '完成十次职涯重启',
+        description: '完成十次生涯',
         condition: 'TMS>=9',
         opportunity: Ao.End,
         grade: 2,
@@ -179,12 +186,48 @@ const items: Achievement[] = [
     },
     {
         id: 320,
-        name: '全栈人生',
-        description: '技术、沟通、健康、心态均达到 15',
+        name: '全面成长',
+        description: '专业能力、沟通、健康、心态均达到 15',
         condition: '(INT>=15)&(CHR>=15)&(STR>=15)&(SPR>=15)',
         opportunity: Ao.Summary,
         grade: 3,
         hide: true,
+    },
+    {
+        id: 321,
+        name: '大学第一周',
+        description: '为自己的校园生活安排了第一个星期',
+        condition: `EVT?[${campusEventIds.firstWeek + 1},${campusEventIds.firstWeek + 2},${campusEventIds.firstWeek + 3}]`,
+        opportunity: Ao.Trajectory,
+        grade: 0,
+        hide: false,
+    },
+    {
+        id: 322,
+        name: '课堂之外',
+        description: '完成一次面向毕业方向的专业实践',
+        condition: `EVT?[${practiceEvents.join(',')}]`,
+        opportunity: Ao.Trajectory,
+        grade: 1,
+        hide: false,
+    },
+    {
+        id: 323,
+        name: '毕业合照',
+        description: '走完四年的大学生活',
+        condition: `EVT?[${campusEventIds.graduation}]`,
+        opportunity: Ao.Trajectory,
+        grade: 1,
+        hide: false,
+    },
+    {
+        id: 324,
+        name: '毕业一周年',
+        description: '完成毕业后的第一年',
+        condition: `EVT?[${graduateEndings.join(',')}]`,
+        opportunity: Ao.Summary,
+        grade: 2,
+        hide: false,
     },
 ]
 export const achievements = new Map(items.map((item) => [item.id, item]))
@@ -236,7 +279,7 @@ export const specialThanks: SpecialThanks[] = [
     },
     {
         group: SpecialThanksGroup.G2,
-        name: '每一个认真生活的开发者',
-        comment: '愿你的提交有人理解，付出有所回响，下班也有自己的生活。',
+        name: '每一位认真生活的玩家',
+        comment: '愿你的兴趣有时间尝试，付出有所回响，忙完也有自己的生活。',
     },
 ]

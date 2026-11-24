@@ -1,8 +1,18 @@
-import { events, talents, achievements, characters, ages, endings } from '@remake/data'
-import type { Event, Talent, Achievement, Character, Age } from '@remake/data'
+import { events, talents, achievements, characters, ages, endings, majors, CampusQuarters, CareerQuarters } from '@remake/data'
+import type { Event, Talent, Achievement, Character, Age, Major } from '@remake/data'
 
 type Saved = { profile: string; unique: string | null; version: number; initialized: boolean }
-type Content = { careerQuarters: number; events: Event[]; talents: Talent[]; achievements: Achievement[]; characters: Character[]; ages: Age[]; endings: { event: number; name: string; description: string }[] }
+type Content = {
+    careerQuarters: number
+    campusQuarters?: number
+    majors?: Major[]
+    events: Event[]
+    talents: Talent[]
+    achievements: Achievement[]
+    characters: Character[]
+    ages: Age[]
+    endings: { event: number; name: string; description: string }[]
+}
 let saved: Saved
 let pending: Promise<unknown> = Promise.resolve()
 let initialization: Promise<void> | undefined
@@ -15,15 +25,19 @@ async function request<T>(url: string, body?: unknown, method = 'POST'): Promise
     if (!response.ok) throw new Error(result.message || '档案保存失败')
     return result as T
 }
-function load<T extends { id: number }>(map: Map<number,T>, rows: T[]) {
+function load<Id extends string | number, T extends { id: Id }>(map: Map<Id, T>, rows: T[]) {
     map.clear()
     for (const row of rows) map.set(row.id, row)
 }
 async function initialize() {
     const { snapshot } = await request<{ snapshot: Content }>('/api/content')
-    if (snapshot.careerQuarters !== 36) throw new Error('游戏内容版本不匹配')
+    if (snapshot.careerQuarters !== CareerQuarters) throw new Error('游戏内容版本不匹配')
+    if (snapshot.campusQuarters !== CampusQuarters || !snapshot.majors?.length) {
+        throw new Error('大学专业内容尚未同步，请更新数据库内容后重试')
+    }
     load(events, snapshot.events); load(talents, snapshot.talents)
     load(achievements, snapshot.achievements); load(characters, snapshot.characters)
+    load(majors, snapshot.majors)
     ages.clear(); for (const row of snapshot.ages) ages.set(row.age, row)
     endings.clear(); for (const row of snapshot.endings) endings.set(row.event, { name: row.name, description: row.description })
     saved = await request<Saved>('/api/profile')

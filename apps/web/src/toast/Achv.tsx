@@ -5,6 +5,7 @@ import './Achv.css'
 export function ToastAchvContainer() {
     const { toasts, handlers } = useToaster({ duration: 4000 }, 'achv-toast')
     const { startPause, endPause, calculateOffset, updateHeight } = handlers
+    const latest = toasts.find(item => item.visible)?.id
     return (
         <div
             className="achv-toast-container"
@@ -18,7 +19,7 @@ export function ToastAchvContainer() {
                 })
                 return (
                     <div
-                        className={`toast-item ${toast.visible ? 'visible' : 'hidden'}`}
+                        className={`toast-item ${toast.visible ? 'visible' : 'hidden'}${toast.id === latest ? ' latest' : ''}`}
                         key={toast.id}
                         ref={el => {
                             if (el && typeof toast.height !== 'number') {

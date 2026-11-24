@@ -1,3 +1,5 @@
+import { CampusQuarters, GraduationQuarter, type MajorId } from '../src/index'
+
 export const properties = {
     charm: '沟通',
     intelligence: '技术',
@@ -9,6 +11,31 @@ export const properties = {
 }
 
 export const quarterLabel = (quarter: number) => quarter <= 0 ? '入职日' : `第 ${Math.ceil(quarter / 4)} 年 Q${(quarter - 1) % 4 + 1}`
+
+const campusProperties = { ...properties, intelligence: '专业能力' }
+
+export function attributeLabels(major?: MajorId) {
+    return major ? campusProperties : properties
+}
+
+export function journeyTime(quarter: number, major?: MajorId) {
+    if (!major) return quarterLabel(quarter)
+    if (quarter <= 0) return '报到日'
+    if (quarter === GraduationQuarter) return '毕业离校'
+    if (quarter > GraduationQuarter) return `毕业后第 ${quarter - GraduationQuarter} 季度`
+    const year = ['大一', '大二', '大三', '大四'][Math.floor((quarter - 1) / 4)]
+    const semester = (quarter - 1) % 4 < 2 ? '上' : '下'
+    return `${year}${semester} · ${quarter % 2 ? '学期前段' : '学期后段'}`
+}
+
+export function campusStage(quarter: number) {
+    if (quarter >= CampusQuarters) return '毕业一年回望'
+    if (quarter > GraduationQuarter) return '初入职场'
+    if (quarter === GraduationQuarter) return '毕业离校'
+    if (quarter >= 11) return '毕设与去向'
+    if (quarter >= 5) return '专业实践'
+    return '入学适应'
+}
 
 const s = (str: string) => str.split('|')
 const p = (prefix: string, arr: string[]) => arr.map(v => prefix + v)

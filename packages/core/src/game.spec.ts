@@ -57,8 +57,8 @@ describe('Programmer career lifecycle', () => {
             }
             expect(state.life).toBe(0)
             expect(state.pendingChoice).toBeUndefined()
-            expect(state.decisions.length).toBeLessThanOrEqual(8)
-            if (state.events.has(20036)) expect(state.decisions.length).toBe(8)
+            expect(state.decisions.length).toBeLessThanOrEqual(10)
+            if (state.events.has(20036)) expect(state.decisions.length).toBe(10)
             const reached = [...endings.keys()].filter(id => state.events.has(id))
             expect(reached.length).toBe(1)
             distribution.set(reached[0]!, (distribution.get(reached[0]!) ?? 0) + 1)

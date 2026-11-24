@@ -7,7 +7,9 @@ const object = value => value !== null && typeof value === 'object' && !Array.is
 const parse = raw => { try { return JSON.parse(raw) } catch { throw new ProfileError('档案内容无法解析，原始本地档案已保留') } }
 
 export async function profileService(db, userId) {
-    const { data } = await source36()
+    const { data, checksum } = await source36()
+    const majorIds = new Set(data.majors?.map(major => major.id))
+    const eventDefinitions = new Map(data.events.map(event => [event.id, event]))
     const known = { talents: new Set(data.talents.map(x => x.id)), events: new Set(data.events.map(x => x.id)), achievements: new Set(data.achievements.map(x => x.id)) }
     const events = new Map((await db('events').whereNotNull('source_id').select('id', 'source_id')).map(x => [x.source_id, x.id]))
     const numericProperties = value => object(value) && Object.values(value).every(x => typeof x === 'number' && Number.isFinite(x))
@@ -73,18 +75,29 @@ export async function profileService(db, userId) {
     }
     async function archiveCareer({ id, state }) {
         if (typeof id !== 'string' || !/^[0-9a-f-]{36}$/i.test(id) || !object(state) || !object(state.props) || !numericProperties(state.props.current) || !Array.isArray(state.decisions) || !Array.isArray(state.events)) throw new ProfileError('生涯历史格式不正确')
+        if (state.major !== undefined && !majorIds.has(state.major)) throw new ProfileError('生涯专业不正确')
+        const maxQuarter = state.major ? data.campusQuarters : data.careerQuarters
         const quarter = state.props.current.age
-        if (!Number.isInteger(quarter) || quarter < 0 || quarter > 36 || state.events.some(id => !known.events.has(id))) throw new ProfileError('生涯季度或事件引用不正确')
-        for (const decision of state.decisions) if (!data.events.find(e => e.id === decision.event)?.choices?.some(c => c.id === decision.choice)) throw new ProfileError('生涯选择记录不正确')
-        const { checksum } = await source36()
+        if (!Number.isInteger(quarter) || quarter < 0 || quarter > maxQuarter || state.events.some(id => !known.events.has(id))) throw new ProfileError('生涯季度或事件引用不正确')
+        for (const decision of state.decisions) if (!eventDefinitions.get(decision.event)?.choices?.some(c => c.id === decision.choice)) throw new ProfileError('生涯选择记录不正确')
         return db.transaction(async trx => {
             const version = await trx('content_versions').where({ checksum }).first()
-            const existing = await trx('career_runs').where({ id }).first()
-            if (existing) {
+            if (!version) throw new ProfileError('生涯内容尚未同步到数据库', 503)
+            const [inserted] = await trx('career_runs').insert({
+                id,
+                user_id: userId,
+                content_version_id: version.id,
+                quarter,
+                state: JSON.stringify(state),
+                rng_state: 'client-unavailable',
+                status: 'ended',
+                version: state.decisions.length,
+            }).onConflict('id').ignore().returning('id')
+            if (!inserted) {
+                const existing = await trx('career_runs').where({ id }).first()
                 if (existing.user_id !== userId || digest(existing.state) !== digest(state)) throw new ProfileError('生涯编号冲突', 409)
                 return { id, repeated: true }
             }
-            await trx('career_runs').insert({ id, user_id: userId, content_version_id: version.id, quarter, state: JSON.stringify(state), rng_state: 'client-unavailable', status: 'ended', version: state.decisions.length })
             for (const decision of state.decisions) {
                 const hash = createHash('sha256').update(id + ':' + decision.instance).digest('hex')
                 const request_id = `${hash.slice(0,8)}-${hash.slice(8,12)}-${hash.slice(12,16)}-${hash.slice(16,20)}-${hash.slice(20,32)}`

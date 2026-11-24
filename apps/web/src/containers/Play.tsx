@@ -1,13 +1,14 @@
 import { useState, useRef, useCallback } from 'react'
 import { useLayoutEffect, useEffect } from 'react'
-import { useNext, useGotoSummary, type Log } from '@remake/hooks'
+import { useNext, useGotoSummary, useGameState, type Log } from '@remake/hooks'
 import { useJudge } from '@/hooks/judge'
-import { achievements, events, talents, CareerQuarters } from '@remake/data'
-import { properties, quarterLabel } from '@remake/data/etc/display'
+import { achievements, events, majors, talents, type MajorId } from '@remake/data'
+import { attributeLabels, journeyTime } from '@remake/data/etc/display'
 import { AutoInterval } from '@/config'
 import { format } from '@remake/vitex'
 import { toastAchvs } from '@/toast/Achv'
 import Dialogue, { ChoiceChanges } from '@/components/Dialogue'
+import JourneyProgress from '@/components/JourneyProgress'
 import './Play.css'
 
 function LogTalent({ id }: { id: number }) {
@@ -75,10 +76,10 @@ function LogAchievements({ items }: { items: number[] }) {
     return <ul className="log-inner log-achievements">{els}</ul>
 }
 
-function Log({ log, index }: { log: Log; index: number }) {
+function Log({ log, index, major }: { log: Log; index: number; major?: MajorId }) {
     return (
         <li className="log">
-            <span className="age font-mono">{quarterLabel(log.age)}</span>
+            <span className="age">{journeyTime(log.age, major)}</span>
             <div className="content">
                 {log.decision && (
                     <div className="log-decision">
@@ -93,7 +94,7 @@ function Log({ log, index }: { log: Log; index: number }) {
                                     )?.label
                             }
                         </span>
-                        <ChoiceChanges changes={log.decision.changes} />
+                        <ChoiceChanges changes={log.decision.changes} major={major} />
                     </div>
                 )}
                 <LogTalents items={log.talents} />
@@ -105,12 +106,13 @@ function Log({ log, index }: { log: Log; index: number }) {
 }
 
 interface PropProps {
-    prop: keyof typeof properties
+    prop: string
+    label: string
     value: number
     grade: number
 }
 
-function Prop({ prop, value, grade }: PropProps) {
+function Prop({ prop, label, value, grade }: PropProps) {
     const prevRef = useRef<number>(value)
     const [trend, setTrend] = useState<'up' | 'down' | 'normal'>('normal')
     const [flip, setFlip] = useState(0)
@@ -145,18 +147,19 @@ function Prop({ prop, value, grade }: PropProps) {
 
     return (
         <li className={`${prop} grade-${grade} trend-${trend}-${flip}`}>
-            <span className="name">{properties[prop]}</span>
+            <span className="name">{label}</span>
             <span className="value font-mono">{displayValue}</span>
         </li>
     )
 }
 
-function Properties() {
+function Properties({ major }: { major?: MajorId }) {
     const judges = useJudge()
+    const labels = attributeLabels(major)
     return (
         <ul className="properties">
             {judges.map(([key, { value, grade }]) => (
-                <Prop key={key} prop={key} value={value} grade={grade} />
+                <Prop key={key} prop={key} label={labels[key]} value={value} grade={grade} />
             ))}
         </ul>
     )
@@ -164,12 +167,11 @@ function Properties() {
 
 export function Play() {
     const [{ logs, ended, pending, choices }, next, choose] = useNext()
-    const decisionCount = logs.filter((log) => log.decision).length
-    const [autoVersion, setAutoVersion] = useState<number | null>(null)
-    const auto = autoVersion === decisionCount && !pending && !ended
+    const state = useGameState()!
+    const major = state.major ? majors.get(state.major) : undefined
+    const [auto, setAuto] = useState(false)
     const [history, setHistory] = useState(false)
     const logRef = useRef<HTMLUListElement>(null)
-    const autoRef = useRef(0)
     const processRef = useRef(false)
     const gotoSummary = useGotoSummary()
     const handleNext = useCallback(() => {
@@ -183,7 +185,6 @@ export function Play() {
     const handleChoose = useCallback(
         (choice: string) => {
             if (!pending) return
-            setAutoVersion(null)
             setHistory(false)
             toastAchvs(choose(pending.instance, choice))
         },
@@ -201,34 +202,20 @@ export function Play() {
         })
     }, [logs, history])
     useEffect(() => {
-        if (!auto || pending || ended) window.clearInterval(autoRef.current)
-        else autoRef.current = window.setInterval(handleNext, AutoInterval)
-        return () => window.clearInterval(autoRef.current)
+        if (!auto || pending || ended) return
+        const timer = window.setInterval(handleNext, AutoInterval)
+        return () => window.clearInterval(timer)
     }, [auto, pending, ended, handleNext])
     return (
         <div className="screen play">
-            <div className="career-progress">
-                <strong>
-                    {ended
-                        ? '本次生涯已完成'
-                        : logs.length
-                          ? quarterLabel(logs.at(-1)!.age)
-                          : '等待入职'}
-                </strong>
-                <progress
-                    aria-label="职业生涯进度"
-                    value={Math.max(0, logs.at(-1)?.age ?? 0)}
-                    max={CareerQuarters}
-                />
-                <span>
-                    {Math.max(0, logs.at(-1)?.age ?? 0)} / {CareerQuarters} 季度
-                </span>
-            </div>
-            <Properties />
+            <JourneyProgress age={state.props.current.age} major={major} events={state.events} ended={ended} />
+            <Properties major={state.major} />
             {pending && !history ? (
                 <Dialogue
+                    major={state.major}
                     pending={pending}
                     choices={choices}
+                    resumeAuto={auto}
                     onChoose={handleChoose}
                     onHistory={() => setHistory(true)}
                 />
@@ -236,11 +223,11 @@ export function Play() {
                 <ul className="logs hide-scrollbar" ref={logRef}>
                     {!logs.length && (
                         <li className="log-empty">
-                            &gt; 开发环境就绪。点击「下一季度」开始你的第一天。
+                            {major ? '点击「大学报到」，开启你的第一天。' : '点击「下一季度」，开始你的入职日。'}
                         </li>
                     )}
                     {logs.map((log, index) => (
-                        <Log key={index} log={log} index={index} />
+                        <Log key={index} log={log} index={index} major={state.major} />
                     ))}
                 </ul>
             )}
@@ -256,22 +243,20 @@ export function Play() {
                     )}
                     {!ended && !pending && (
                         <button className="primary" onClick={handleNext}>
-                            下一季度 →
+                            {major && !logs.length ? '大学报到' : '下一季度'} →
                         </button>
                     )}
                     {!ended && !pending && (
                         <button
                             className="secondary"
-                            onClick={() =>
-                                setAutoVersion(auto ? null : decisionCount)
-                            }
+                            onClick={() => setAuto(!auto)}
                         >
                             {auto ? '暂停运行' : '自动运行'}
                         </button>
                     )}
                     {ended && (
                         <button className="primary" onClick={handleGotoSummary}>
-                            查看职业复盘
+                            {major ? '查看生涯复盘' : '查看职业复盘'}
                         </button>
                     )}
                 </div>

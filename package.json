@@ -48,7 +48,7 @@
     "test:condition": "pnpm --filter @remake/condition test",
     "test:hooks": "pnpm --filter @remake/hooks test",
     "typecheck": "tsc -p apps/web/tsconfig.json --noEmit",
-    "test:rules": "bun test packages/condition packages/core packages/data packages/vitex"
+    "test:rules": "bun test ./packages/condition/ ./packages/core/ ./packages/data/ ./packages/vitex/"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",

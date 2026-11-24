@@ -12,10 +12,11 @@ import {
 } from '@remake/core'
 import { profileAtom } from './profile'
 import type { GameState, Properties, NextResult } from '@remake/core'
-import type { Talent } from '@remake/data'
+import type { MajorId, Talent } from '@remake/data'
 
 export enum Step {
     Idle = 'idle',
+    Major = 'major',
     Mode = 'mode',
     Chara = 'chara',
     Pick = 'pick',
@@ -40,6 +41,7 @@ export const stepAtom = atom<Step>(Step.Idle)
 export const gameStateAtom = atom<GameState | null>(null)
 export const logsAtom = atom<Log[]>([])
 export const summaryAtom = atom(0)
+const majorAtom = atom<MajorId | undefined>(undefined)
 
 type AdvanceAction =
     | { type: 'next' }
@@ -94,16 +96,31 @@ export const useGameState = () => useAtomValue(gameStateAtom)
 export const useSetGameState = () => useSetAtom(gameStateAtom)
 export const useSummary = () => useAtomValue(summaryAtom)
 export const useLogs = () => useAtomValue(logsAtom)
+export const useSelectedMajor = () => useAtomValue(majorAtom)
 
-export const useRemake = () => {
+export const useRemake = (chooseMajor = false) => {
     const { mode } = useConfig()
     const [{ times }] = useProfile()
     const setStep = useSetAtom(stepAtom)
+    const setMajor = useSetAtom(majorAtom)
+    const setMode = useSetAtom(modeAtom)
     const reset = useGameReset()
     return useCallback(() => {
         reset()
+        setMajor(undefined)
+        setMode(Mode.Classic)
+        if (chooseMajor) return setStep(Step.Major)
         setStep(times < mode ? Step.Pick : Step.Mode)
-    }, [mode, times, setStep, reset])
+    }, [chooseMajor, mode, times, setStep, setMajor, setMode, reset])
+}
+
+export const useChooseMajor = () => {
+    const setMajor = useSetAtom(majorAtom)
+    const setStep = useSetAtom(stepAtom)
+    return useCallback((major: MajorId) => {
+        setMajor(major)
+        setStep(Step.Pick)
+    }, [setMajor, setStep])
 }
 
 export const useModeChoose = () => {
@@ -130,13 +147,14 @@ export const useStart = () => {
     const setState = useSetAtom(gameStateAtom)
     const { final: allocate } = useAlloc()
     const { talents: tr } = useReplaced()
+    const major = useSelectedMajor()
     return useCallback(() => {
         const alloc = { ...allocate, spirit }
-        const result = start(profile, alloc, tr.talents)
+        const result = start(profile, alloc, tr.talents, major)
         setState(result.state)
         setStep(Step.Play)
         return result.achievements
-    }, [profile, allocate, spirit, tr, setStep, setState])
+    }, [profile, allocate, spirit, tr, major, setStep, setState])
 }
 
 export const useNext = () => {

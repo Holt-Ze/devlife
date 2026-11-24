@@ -6,6 +6,7 @@ import knex from 'knex'
 import { writeFile } from 'node:fs/promises'
 import { config, localConfig } from '../knexfile.mjs'
 import { profileService } from '../lib/profiles.mjs'
+import { source36 } from '../lib/source36.mjs'
 import { exercise } from './exercise.mjs'
 
 test('native persistent PostgreSQL integration', {timeout:120000}, async t => {
@@ -36,7 +37,8 @@ test('native persistent PostgreSQL integration', {timeout:120000}, async t => {
     await t.test('configured runtime role cannot modify source, read password hashes or create tables', async () => {
         const app = knex(config(settings.appUrl))
         try {
-            assert.equal(Number((await app('events').count('* as n').first()).n),98)
+            const { data } = await source36()
+            assert.equal(Number((await app('events').count('* as n').first()).n), data.events.length)
             await assert.rejects(app('content_versions').update({snapshot:'{}'}),e=>e.code==='42501')
             await assert.rejects(app('users').select('password_hash'),e=>e.code==='42501')
             await assert.rejects(app.raw('CREATE TABLE forbidden_probe(id integer)'),e=>e.code==='42501')
@@ -50,10 +52,10 @@ test('native persistent PostgreSQL integration', {timeout:120000}, async t => {
         try {
             await empty.migrate.latest()
             const result = await empty.migrate.rollback(undefined,true)
-            assert.equal(result[1].length,3)
+            assert.equal(result[1].length,4)
             assert.equal(await empty.schema.hasTable('events'),false)
-            assert.equal((await empty.migrate.latest())[1].length,3)
+            assert.equal((await empty.migrate.latest())[1].length,4)
         } finally {await empty.destroy();await admin.query(`DROP DATABASE ${emptyName} WITH (FORCE)`)}
     })
-    await writeFile(new URL('../../../.local/real-tests.json',import.meta.url),JSON.stringify({date:new Date().toISOString(),database:'PostgreSQL 18.6 native',checks:15,passed:true,concurrentTransactions:'one success, one 409',runtimeRoleRestricted:true,rollbackReplay:true},null,2))
+    await writeFile(new URL('../../../.local/real-tests.json',import.meta.url),JSON.stringify({date:new Date().toISOString(),database:'PostgreSQL 18.6 native',checks:16,passed:true,concurrentTransactions:'one success, one 409',runtimeRoleRestricted:true,rollbackReplay:true},null,2))
 })

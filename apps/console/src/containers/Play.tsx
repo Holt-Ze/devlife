@@ -185,7 +185,6 @@ export function Play() {
     const { isFocused } = useAppFocus()
     const isActive = isFocused('main')
     const logRef = useScroll({ isActive })
-    const autoRef = useRef<ReturnType<typeof setInterval>>(undefined)
     const processRef = useRef(false)
     const gotoSummary = useGotoSummary()
     const handleNext = useCallback(() => {
@@ -202,15 +201,16 @@ export function Play() {
         toastAchvs(achievements)
     }, [ended, gotoSummary])
     useEffect(() => {
-        if (!auto || pending || ended) clearInterval(autoRef.current)
-        else autoRef.current = setInterval(handleNext, AutoInterval)
-        return () => clearInterval(autoRef.current)
+        if (!auto || pending || ended) return
+        const timer = setInterval(handleNext, AutoInterval)
+        return () => clearInterval(timer)
     }, [auto, pending, ended, handleNext])
     useInput(
         (input, key) => {
             if (pending) {
                 const option = choices[Number(input) - 1]
-                if (option?.available) { setAuto(false); toastAchvs(choose(pending.instance, option.id)) }
+                if (option?.available)
+                    toastAchvs(choose(pending.instance, option.id))
                 return
             }
             if (ended) {
@@ -260,7 +260,7 @@ export function Play() {
                 {pending && <Box flexDirection="column" borderStyle="round" borderColor={colors.primary} padding={1}>
                     <Text bold>{events.get(pending.event)?.dialogue?.speaker}：{events.get(pending.event)?.dialogue?.text}</Text>
                     {choices.map((option, index) => <Text key={option.id} dimColor={!option.available}>[{index + 1}] {option.label}{!option.available ? `（${option.lockedReason}）` : ''}</Text>)}
-                    <Text dimColor>自动运行已暂停，请输入选项编号。</Text>
+                    <Text dimColor>{auto ? '请输入选项编号，选择后将继续自动运行。' : '请输入选项编号。'}</Text>
                 </Box>}
             </Box>
         </Box>

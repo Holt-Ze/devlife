@@ -6,6 +6,11 @@ import knex from 'knex'
 import { config, localConfig } from './knexfile.mjs'
 import { profileService, ProfileError } from './lib/profiles.mjs'
 
+import { reviewCareer } from './lib/review.mjs'
+
+const envFile = fileURLToPath(new URL('../../.local/deepseek.env', import.meta.url))
+try { process.loadEnvFile(envFile) } catch (error) { if (error.code !== 'ENOENT') throw error }
+
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const staticRoot = path.join(root, 'apps/web/dist')
 export async function createApp({ connection, userId, port = 8787 } = {}) {
@@ -27,6 +32,7 @@ export async function createApp({ connection, userId, port = 8787 } = {}) {
                 for await (const chunk of req) { input += chunk; if (Buffer.byteLength(input) > 1024 * 1024) throw new ProfileError('请求过大', 413) }
                 try { body = JSON.parse(input) } catch { throw new ProfileError('请求格式不正确') }
             }
+            if (url.pathname === '/api/review' && req.method === 'POST') return send(200, await reviewCareer(body))
             if (url.pathname === '/healthz' && req.method === 'GET') { await db.raw('SELECT 1'); return send(200, { status: 'ok', storage: 'postgresql', gameQuarters: 36 }) }
             if (url.pathname === '/api/content' && req.method === 'GET') { const row = await db('content_versions').where({ source_tag: 'game36' }).orderBy('created_at','desc').first(); return send(200, { checksum: row.checksum, snapshot: row.snapshot }) }
             if (url.pathname === '/api/profile' && req.method === 'GET') return send(200, await profiles.get())
@@ -49,6 +55,6 @@ export async function createApp({ connection, userId, port = 8787 } = {}) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     const app = await createApp()
-    app.server.listen(8787, '127.0.0.1', () => console.log('程序员模拟器：http://127.0.0.1:8787'))
+    app.server.listen(8787, '127.0.0.1', () => console.log('大学生生涯模拟器 http://127.0.0.1:8787'))
     for (const signal of ['SIGINT','SIGTERM']) process.on(signal, async () => { await app.close(); process.exit(0) })
 }

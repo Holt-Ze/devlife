@@ -1,6 +1,6 @@
-# Programmer Simulator · DEVLIFE
+# Student Career Simulator · DEVLIFE
 
-A Chinese text-based developer career simulator adapted from [VickScarlet/remake](https://github.com/VickScarlet/remake), under the MIT license. Choose talents and starting attributes, then make eight key dialogue decisions during a nine-year career across 36 quarters and six endings. Choices affect future events and career outcomes; autoplay pauses until you answer.
+A Chinese text-based career simulator adapted from [VickScarlet/remake](https://github.com/VickScarlet/remake), under the MIT license. Choose one of six majors and play through four years of university and the first year after graduation. Course projects, internships, and capstones shape which paths open at graduation. The original 36-quarter developer career has its own entry on the home screen. Autoplay pauses for decisions and resumes after you answer.
 
 See [中文说明](./README-zh_CN.md) for gameplay, content locations and validation.
 
